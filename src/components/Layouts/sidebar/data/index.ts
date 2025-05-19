@@ -2,12 +2,12 @@ import {DocumentIcon, PlusIcon} from "@heroicons/react/24/outline";
 import {SettingsIcon} from "@/components/Layouts/header/user-info/icons";
 
 type NavSubItem = {
-  title: string;
+  titleKey: string;
   url: string;
 };
 
 type NavItem = {
-  title: string;
+  titleKey: string;
   icon: React.ElementType;
   url?: string;
   items: NavSubItem[];
@@ -24,8 +24,9 @@ export const NAV_DATA: NavSection[] = [
     label: "CHAT",
     items: [
       {
-        title: "New Chat",
+        titleKey: "common.newChat",
         icon: PlusIcon,
+        url: "/new-chat",
         items: [],
       },
     ]
@@ -34,8 +35,9 @@ export const NAV_DATA: NavSection[] = [
     label: "FILES",
     items: [
       {
-        title: "New File",
+        titleKey: "common.newFile",
         icon: DocumentIcon,
+        url: "/new-file",
         items: [],
       }
     ]
@@ -44,8 +46,9 @@ export const NAV_DATA: NavSection[] = [
     label: "OTHERS",
     items: [
       {
-        title: "Settings",
+        titleKey: "common.settings",
         icon: SettingsIcon,
+        url: "/settings",
         items: [],
       }
     ]

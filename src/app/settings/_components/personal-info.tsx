@@ -1,3 +1,5 @@
+"use client";
+
 import {
   CallIcon,
   EmailIcon,
@@ -7,17 +9,20 @@ import {
 import InputGroup from "@/components/FormElements/InputGroup";
 import { TextAreaGroup } from "@/components/FormElements/InputGroup/text-area";
 import { ShowcaseSection } from "@/components/Layouts/showcase-section";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export function PersonalInfoForm() {
+  const { t } = useLanguage();
+  
   return (
-    <ShowcaseSection title="Personal Information" className="!p-7">
+    <ShowcaseSection title={t('common.personalInfo')} className="!p-7">
       <form>
         <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
           <InputGroup
             className="w-full sm:w-1/2"
             type="text"
             name="fullName"
-            label="Full Name"
+            label={t('settings.name')}
             placeholder="David Jhon"
             defaultValue="David Jhon"
             icon={<UserIcon />}
@@ -42,7 +47,7 @@ export function PersonalInfoForm() {
           className="mb-5.5"
           type="email"
           name="email"
-          label="Email Address"
+          label={t('auth.email')}
           placeholder="devidjond45@gmail.com"
           defaultValue="devidjond45@gmail.com"
           icon={<EmailIcon />}
@@ -82,7 +87,7 @@ export function PersonalInfoForm() {
             className="rounded-lg bg-primary px-6 py-[7px] font-medium text-gray-2 hover:bg-opacity-90"
             type="submit"
           >
-            Save
+            {t('settings.save')}
           </button>
         </div>
       </form>

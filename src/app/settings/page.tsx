@@ -1,16 +1,16 @@
-import type { Metadata } from "next";
-import { PersonalInfoForm } from "./_components/personal-info";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Settings Page",
-};
+import { PersonalInfoForm } from "./_components/personal-info";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function SettingsPage() {
+  const { t } = useLanguage();
+  
   return (
       <div className="mx-auto w-full max-w-[1080px]">
           <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <h2 className="text-[26px] font-bold leading-[30px] text-dark dark:text-white">
-                  Settings
+                  {t('settings.title')}
               </h2>
           </div>
 

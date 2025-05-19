@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useSidebarContext } from "../sidebar/sidebar-context";
 import { MenuIcon } from "./icons";
 import { UserInfo } from "./user-info";
+import { LanguageSwitcher } from "./language-switcher";
 
 export function Header() {
   const { toggleSidebar, isMobile } = useSidebarContext();
@@ -39,6 +40,7 @@ export function Header() {
       </div>
 
       <div className="flex flex-1 items-center justify-end gap-2 min-[375px]:gap-4">
+        <LanguageSwitcher />
         <div className="shrink-0">
           <UserInfo />
         </div>

@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Paper from "@mui/material/Paper";
 import InputGroup from "@/components/FormElements/InputGroup";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type Message = {
     sender: "user" | "assistant";
@@ -10,6 +11,7 @@ type Message = {
 };
 
 export default function NewChatPage() {
+    const { t } = useLanguage();
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState("");
     const bottomRef = useRef<HTMLDivElement>(null);
@@ -44,7 +46,7 @@ export default function NewChatPage() {
                 {!hasStarted && messages.length === 0 && (
                     <div className="absolute inset-0 flex items-center justify-center">
                         <h1 className="text-4xl font-bold text-gray-400 text-center px-4">
-                            Hello, what can I help you with today?
+                            {t('home.welcome')}
                         </h1>
                     </div>
                 )}
@@ -77,7 +79,7 @@ export default function NewChatPage() {
                     className="flex items-end gap-4"
                 >
                     <InputGroup
-                        placeholder="Type your question here..."
+                        placeholder={t('home.description')}
                         type="text"
                         value={input}
                         handleChange={(e) => setInput(e.target.value)}
@@ -88,7 +90,7 @@ export default function NewChatPage() {
                         type="submit"
                         className="bg-primary text-white font-medium px-6 h-12 rounded-lg translate-y-[-10px]"
                     >
-                        Send
+                        {t('common.send')}
                     </button>
                 </form>
             </Paper>

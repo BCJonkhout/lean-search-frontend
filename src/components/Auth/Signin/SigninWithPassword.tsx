@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import InputGroup from "@/components/FormElements/InputGroup";
 import {Alert} from "@/components/ui-elements/alert";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function SigninWithPassword() {
   const router = useRouter();
+  const { t } = useLanguage();
 
   const [data, setData] = useState({
     email: "",
@@ -49,8 +51,8 @@ export default function SigninWithPassword() {
             <div className="max-w-4xl mx-auto w-full mb-6">
               <Alert
                   variant="success"
-                  title="Login Successful"
-                  description="You will be redirected to the chat page in 3 seconds."
+                  title={t('common.signIn')}
+                  description={t('home.description')}
               />
             </div>
         )}
@@ -58,9 +60,9 @@ export default function SigninWithPassword() {
         <form onSubmit={handleSubmit}>
           <InputGroup
               type="email"
-              label="Email"
+              label={t('auth.email')}
               className="mb-4 [&_input]:py-[15px]"
-              placeholder="Enter your email"
+              placeholder={t('auth.email')}
               name="email"
               handleChange={handleChange}
               value={data.email}
@@ -69,9 +71,9 @@ export default function SigninWithPassword() {
 
           <InputGroup
               type="password"
-              label="Password"
+              label={t('auth.password')}
               className="mb-5 [&_input]:py-[15px]"
-              placeholder="Enter your password"
+              placeholder={t('auth.password')}
               name="password"
               handleChange={handleChange}
               value={data.password}
@@ -83,7 +85,7 @@ export default function SigninWithPassword() {
                 type="submit"
                 className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary p-4 font-medium text-white transition hover:bg-opacity-90"
             >
-              Sign In
+              {t('common.signIn')}
               {loading && (
                   <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-white border-t-transparent dark:border-primary dark:border-t-transparent" />
               )}
