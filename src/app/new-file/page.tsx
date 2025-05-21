@@ -4,8 +4,11 @@ import React, { useState } from "react";
 import InputGroup from "@/components/FormElements/InputGroup";
 import { ShowcaseSection } from "@/components/Layouts/showcase-section";
 import { Alert } from "@/components/ui-elements/alert";
+import {useLanguage} from "@/contexts/LanguageContext";
 
 export default function NewFilePage() {
+    const { t } = useLanguage();
+
     const [file, setFile] = useState<File | null>(null);
     const [showAlert, setShowAlert] = useState(false);
 
@@ -31,22 +34,20 @@ export default function NewFilePage() {
     return (
         <div className="flex flex-col px-4 py-10 space-y-12">
             <div className="max-w-4xl mx-auto space-y-6 text-center">
-                <h2 className="text-4xl font-bold text-dark">Upload New File</h2>
+                <h2 className="text-4xl font-bold text-dark">{t('newFile.title')}</h2>
 
                 <p className="text-lg text-gray-600">
-                    You can upload a new file here. Once uploaded, it will be processed and made
-                    available to the language model, allowing it to answer your questions based on
-                    the file&#39;s content.
+                    {t('newFile.text')}
                 </p>
             </div>
 
             <form onSubmit={handleSend} className="max-w-4xl mx-auto w-full space-y-6">
-                <ShowcaseSection title="File upload" className="space-y-5.5 !p-6.5">
+                <ShowcaseSection title={t('newFile.fileUpload')} className="space-y-5.5 !p-6.5">
                     <InputGroup
                         type="file"
                         fileStyleVariant="style1"
-                        label="Attach file"
-                        placeholder="Attach file"
+                        label={t('newFile.attachFile')}
+                        placeholder={t('newFile.attachFile')}
                         handleChange={handleFileChange}
                     />
                 </ShowcaseSection>
@@ -55,8 +56,8 @@ export default function NewFilePage() {
                     <div className="max-w-4xl mx-auto w-full">
                         <Alert
                             variant="success"
-                            title="File Uploaded Successfully"
-                            description={`"${file?.name}" has been received and will be processed shortly.`}
+                            title={t('newFile.success')}
+                            description={`"${file?.name}" ${t('newFile.received')}`}
                         />
                     </div>
                 )}
@@ -67,7 +68,7 @@ export default function NewFilePage() {
                             type="submit"
                             className="w-full bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary/90 transition"
                         >
-                            Submit File
+                            {t('newFile.submit')}
                         </button>
                     </div>
                 )}

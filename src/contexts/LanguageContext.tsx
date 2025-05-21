@@ -1,3 +1,5 @@
+"use client";
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Import translations
@@ -39,7 +41,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const t = (key: string): string => {
     const keys = key.split('.');
     let value: any = translations[language];
-    
+
     for (const k of keys) {
       if (value && value[k]) {
         value = value[k];
@@ -48,7 +50,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         return key;
       }
     }
-    
+
     return value;
   };
 

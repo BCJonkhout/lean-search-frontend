@@ -3,8 +3,11 @@
 import { EmailIcon, PasswordIcon, UserIcon } from "@/assets/icons";
 import React, { useState } from "react";
 import InputGroup from "@/components/FormElements/InputGroup";
+import {useLanguage} from "@/contexts/LanguageContext";
 
 export default function SignupWithPassword() {
+    const { t } = useLanguage();
+
     const [data, setData] = useState({
         name: "",
         email: "",
@@ -40,9 +43,9 @@ export default function SignupWithPassword() {
         <form onSubmit={handleSubmit}>
             <InputGroup
                 type="text"
-                label="Name"
+                label={t('auth.name')}
                 className="mb-4 [&_input]:py-[15px]"
-                placeholder="Enter your full name"
+                placeholder={t('auth.name')}
                 name="name"
                 handleChange={handleChange}
                 value={data.name}
@@ -51,9 +54,9 @@ export default function SignupWithPassword() {
 
             <InputGroup
                 type="email"
-                label="Email"
+                label={t('auth.email')}
                 className="mb-4 [&_input]:py-[15px]"
-                placeholder="Enter your email"
+                placeholder={t('auth.email')}
                 name="email"
                 handleChange={handleChange}
                 value={data.email}
@@ -62,9 +65,9 @@ export default function SignupWithPassword() {
 
             <InputGroup
                 type="password"
-                label="Password"
+                label={t('auth.password')}
                 className="mb-4 [&_input]:py-[15px]"
-                placeholder="Enter your password"
+                placeholder={t('auth.password')}
                 name="password"
                 handleChange={handleChange}
                 value={data.password}
@@ -73,9 +76,9 @@ export default function SignupWithPassword() {
 
             <InputGroup
                 type="password"
-                label="Retype Password"
+                label={t('auth.confirmPassword')}
                 className="mb-5 [&_input]:py-[15px]"
-                placeholder="Retype your password"
+                placeholder={t('auth.confirmPassword')}
                 name="confirmPassword"
                 handleChange={handleChange}
                 value={data.confirmPassword}

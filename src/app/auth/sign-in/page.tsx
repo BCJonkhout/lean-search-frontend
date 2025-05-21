@@ -1,14 +1,11 @@
-import Signin from "@/components/Auth/Signin";
-import type { Metadata } from "next";
-import { useLanguage } from "@/contexts/LanguageContext";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Sign in",
-};
+import Signin from "@/components/Auth/Signin";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function SignIn() {
   const { t } = useLanguage();
-  
+
   return (
     <>
       <div className="rounded-[10px] bg-white shadow-1 dark:bg-gray-dark dark:shadow-card">
