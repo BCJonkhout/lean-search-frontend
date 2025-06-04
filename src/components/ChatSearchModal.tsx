@@ -30,7 +30,7 @@ export default function ChatSearchModal({ open, onClose }: ChatSearchModalProps)
     if (searchQuery.trim()) {
       const filtered = conversations.filter(conv => 
         (conv.title?.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (!conv.title && "new conversation".includes(searchQuery.toLowerCase()))
+        (!conv.title && t('chats.noConversations').toLowerCase().includes(searchQuery.toLowerCase()))
       );
       setFilteredConversations(filtered);
     } else {
@@ -77,7 +77,7 @@ export default function ChatSearchModal({ open, onClose }: ChatSearchModalProps)
       {/* Header */}
       <div className="flex items-center justify-between p-6 border-b">
         <h3 className="text-xl font-bold text-dark">
-          {t('chats.searchTitle') || 'Search Conversations'}
+          {t('chats.searchTitle')}
         </h3>
         <button
           onClick={onClose}
@@ -93,7 +93,7 @@ export default function ChatSearchModal({ open, onClose }: ChatSearchModalProps)
       <div className="p-6 pb-4">
         <InputGroup
           type="text"
-          placeholder={t('chats.searchPlaceholder') || 'Search conversations...'}
+          placeholder={t('chats.searchPlaceholder')}
           value={searchQuery}
           handleChange={(e) => setSearchQuery(e.target.value)}
           className="w-full"
@@ -105,7 +105,7 @@ export default function ChatSearchModal({ open, onClose }: ChatSearchModalProps)
       <div className="flex-1 overflow-y-auto px-6 pb-6 max-h-187.5">
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="text-gray-500">Loading conversations...</div>
+            <div className="text-gray-500">{t('common.loading')}</div>
           </div>
         ) : filteredConversations.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12">
@@ -114,8 +114,8 @@ export default function ChatSearchModal({ open, onClose }: ChatSearchModalProps)
             </svg>
             <p className="text-gray-500">
               {searchQuery ? 
-                (t('chats.noSearchResults') || 'No conversations found') :
-                (t('chats.noConversations') || 'No conversations yet')
+                t('chats.noSearchResults') :
+                t('chats.noConversations')
               }
             </p>
           </div>
@@ -130,7 +130,7 @@ export default function ChatSearchModal({ open, onClose }: ChatSearchModalProps)
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
                     <h4 className="font-medium text-gray-800 mb-1">
-                      {conversation.title || 'New conversation'}
+                      {conversation.title || t('chats.noConversations')}
                     </h4>
                     <p className="text-sm text-gray-500">
                       {formatDate(conversation.updated_at)}

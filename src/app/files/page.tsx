@@ -51,7 +51,7 @@ export default function FilesPage() {
   };
 
   const handleDelete = async (fileId: string) => {
-    if (!confirm(t('files.confirmDelete') || 'Are you sure you want to delete this file?')) {
+    if (!confirm(t('files.confirmDelete'))) {
       return;
     }
 
@@ -60,11 +60,11 @@ export default function FilesPage() {
       if (response.success) {
         setFiles(files.filter(file => file.id !== fileId));
       } else {
-        alert(t('files.deleteError') || 'Failed to delete file');
+        alert(t('files.deleteError'));
       }
     } catch (error) {
       console.error("Error deleting file:", error);
-      alert(t('files.deleteError') || 'Failed to delete file');
+      alert(t('files.deleteError'));
     }
   };
 
@@ -82,11 +82,11 @@ export default function FilesPage() {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
       } else {
-        alert(t('files.downloadError') || 'Failed to download file');
+        alert(t('files.downloadError'));
       }
     } catch (error) {
       console.error("Error downloading file:", error);
-      alert(t('files.downloadError') || 'Failed to download file');
+      alert(t('files.downloadError'));
     }
   };
 
@@ -110,10 +110,10 @@ export default function FilesPage() {
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      pending_processing: { color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300', text: t('files.processing') || 'Processing' },
-      active: { color: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300', text: t('files.processed') || 'Processed' },
-      archived: { color: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300', text: t('files.archived') || 'Archived' },
-      error_processing: { color: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300', text: t('files.failed') || 'Failed' }
+      pending_processing: { color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300', text: t('files.processing') },
+      active: { color: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300', text: t('files.processed') },
+      archived: { color: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300', text: t('files.archived') },
+      error_processing: { color: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300', text: t('files.failed') }
     };
     
     const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending_processing;
@@ -128,7 +128,7 @@ export default function FilesPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-[calc(100vh-140px)]">
-        <div className="text-gray-500 dark:text-gray-400">Loading files...</div>
+        <div className="text-gray-500 dark:text-gray-400">{t('common.loadingFiles')}</div>
       </div>
     );
   }
@@ -145,7 +145,7 @@ export default function FilesPage() {
     <div className="max-w-7xl mx-auto p-6">
       <div className="mb-7.5">
         <h1 className="text-body-2xlg font-bold text-dark dark:text-white mb-2">
-          {t('files.title') || 'My Files'}
+          {t('files.title')}
         </h1>
         <div className="text-sm text-gray-500 dark:text-gray-400">
           {files.length} {files.length === 1 ? 'file' : 'files'}
@@ -161,10 +161,10 @@ export default function FilesPage() {
               </svg>
             </div>
             <h3 className="text-lg font-medium text-gray-600 dark:text-gray-300 mb-2">
-              {t('files.noFiles') || 'No files uploaded yet'}
+              {t('files.noFiles')}
             </h3>
             <p className="text-gray-500 dark:text-gray-400">
-              {t('files.noFilesDesc') || 'Upload your first file to get started'}
+              {t('files.noFilesDesc')}
             </p>
           </div>
         </div>
@@ -174,19 +174,19 @@ export default function FilesPage() {
             <TableHeader>
               <TableRow className="border-none uppercase">
                 <TableHead className="min-w-[200px] !text-left">
-                  {t('files.name') || 'File Name'}
+                  {t('files.name')}
                 </TableHead>
                 <TableHead className="text-center">
-                  {t('files.size') || 'Size'}
+                  {t('files.size')}
                 </TableHead>
                 <TableHead className="text-center">
-                  {t('files.status') || 'Status'}
+                  {t('files.status')}
                 </TableHead>
                 <TableHead className="text-center">
-                  {t('files.uploaded') || 'Uploaded'}
+                  {t('files.uploaded')}
                 </TableHead>
                 <TableHead className="!text-right">
-                  {t('files.actions') || 'Actions'}
+                  {t('files.actions')}
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -232,7 +232,7 @@ export default function FilesPage() {
                       <button
                         onClick={() => handleDownload(file.id, file.title)}
                         className="p-2 text-primary hover:text-primary/80 transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
-                        title={t('files.download') || 'Download'}
+                        title={t('files.download')}
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -241,7 +241,7 @@ export default function FilesPage() {
                       <button
                         onClick={() => handleDelete(file.id)}
                         className="p-2 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
-                        title={t('files.delete') || 'Delete'}
+                        title={t('files.delete')}
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />

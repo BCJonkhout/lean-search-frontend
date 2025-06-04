@@ -8,7 +8,12 @@ const translations = {
     personalInfo: "Persoonlijke Informatie",
     language: "Taal",
     send: "Verstuur",
-    welcome: "Welkom"
+    welcome: "Welkom",
+    myFiles: "Mijn Bestanden",
+    sending: "Versturen...",
+    loading: "Laden...",
+    loadingConversation: "Gesprek laden...",
+    loadingFiles: "Bestanden laden..."
   },
   auth: {
     email: "E-mail",
@@ -19,7 +24,12 @@ const translations = {
     noAccount: "Nog geen account?",
     haveAccount: "Heb je al een account?",
     createAccount: "Maak een account aan",
-    signUpText: "Registreer je om gebruik te maken van het platform"
+    signUpText: "Registreer je om gebruik te maken van het platform",
+    passwordsDoNotMatch: "Wachtwoorden komen niet overeen",
+    enterFullName: "Voer je volledige naam in",
+    registrationFailed: "Registratie mislukt. Probeer opnieuw.",
+    loginFailed: "Inloggen mislukt. Probeer opnieuw.",
+    errorOccurred: "Sorry, er is een fout opgetreden bij het verwerken van je bericht."
   },
   home: {
     welcome: "Welkom bij Symbol Lean Search",
@@ -38,7 +48,42 @@ const translations = {
     title: "Instellingen",
     darkMode: "Donkere Modus",
     name: "Naam",
-    save: "Opslaan"
+    save: "Opslaan",
+    firstName: "Voornaam",
+    lastName: "Achternaam",
+    organisation: "Organisatie",
+    bio: "Biografie",
+    systemPrompt: "Systeem Prompt (AI Assistent Instructies)",
+    reset: "Reset",
+    profileUpdated: "Profiel succesvol bijgewerkt!",
+    profileUpdateFailed: "Profiel bijwerken mislukt"
+  },
+  files: {
+    title: "Mijn Bestanden",
+    name: "Bestandsnaam",
+    size: "Grootte",
+    status: "Status",
+    uploaded: "Geüpload",
+    actions: "Acties",
+    processing: "Verwerking",
+    processed: "Verwerkt",
+    archived: "Gearchiveerd",
+    failed: "Mislukt",
+    noFiles: "Nog geen bestanden geüpload",
+    noFilesDesc: "Upload je eerste bestand om te beginnen",
+    confirmDelete: "Weet je zeker dat je dit bestand wilt verwijderen?",
+    deleteError: "Bestand verwijderen mislukt",
+    downloadError: "Bestand downloaden mislukt",
+    download: "Download",
+    delete: "Verwijder"
+  },
+  chats: {
+    seeAll: "Alle chats bekijken",
+    searchTitle: "Zoek Gesprekken",
+    searchPlaceholder: "Zoek gesprekken...",
+    noSearchResults: "Geen gesprekken gevonden",
+    noConversations: "Nog geen gesprekken",
+    recentChats: "Recente Chats"
   }
 };
 

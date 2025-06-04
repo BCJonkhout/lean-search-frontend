@@ -207,7 +207,7 @@ export function Sidebar() {
                 {section.label === "CHAT" && (
                   <div className="mb-6">
                     <h2 className="mb-5 text-sm font-medium text-dark-4 dark:text-dark-6">
-                      RECENT CHATS
+                      {t('chats.recentChats')}
                     </h2>
                     <nav role="navigation" aria-label="Recent chats">
                       <ul className="space-y-2">
@@ -220,7 +220,7 @@ export function Sidebar() {
                               className="flex items-center gap-3 py-2"
                             >
                               <span className="truncate text-sm">
-                                {conversation.title || 'New conversation'}
+                                {conversation.title || t('chats.noConversations')}
                               </span>
                             </MenuItem>
                           </li>
@@ -236,7 +236,7 @@ export function Sidebar() {
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
                             <span className="text-sm">
-                              {t('chats.seeAll') || 'See all chats'}
+                              {t('chats.seeAll')}
                             </span>
                           </MenuItem>
                         </li>

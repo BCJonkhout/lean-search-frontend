@@ -70,11 +70,11 @@ export function PersonalInfoForm() {
       const response = await authService.updateProfile(userData);
       
       if (response.success) {
-        alert('Profile updated successfully!');
+        alert(t('settings.profileUpdated'));
       }
     } catch (error: any) {
       console.error('Failed to update profile:', error);
-      alert(error.message || 'Failed to update profile');
+      alert(error.message || t('settings.profileUpdateFailed'));
     } finally {
       setSaving(false);
     }
@@ -98,7 +98,7 @@ export function PersonalInfoForm() {
             className="w-full sm:w-1/2"
             type="text"
             name="first_name"
-            label="First Name"
+            label={t('settings.firstName')}
             placeholder="John"
             value={userData.first_name}
             handleChange={(e) => handleInputChange('first_name', e.target.value)}
@@ -111,7 +111,7 @@ export function PersonalInfoForm() {
             className="w-full sm:w-1/2"
             type="text"
             name="surname"
-            label="Last Name"
+            label={t('settings.lastName')}
             placeholder="Doe"
             value={userData.surname}
             handleChange={(e) => handleInputChange('surname', e.target.value)}
@@ -138,7 +138,7 @@ export function PersonalInfoForm() {
           className="mb-5.5"
           type="text"
           name="organisation"
-          label="Organisation"
+          label={t('settings.organisation')}
           placeholder="Your Company"
           value={userData.organisation}
           handleChange={(e) => handleInputChange('organisation', e.target.value)}
@@ -149,7 +149,7 @@ export function PersonalInfoForm() {
 
         <TextAreaGroup
           className="mb-5.5"
-          label="BIO"
+          label={t('settings.bio')}
           name="bio"
           placeholder="Tell us about yourself"
           icon={<PencilSquareIcon />}
@@ -159,7 +159,7 @@ export function PersonalInfoForm() {
 
         <TextAreaGroup
           className="mb-5.5"
-          label="System Prompt (AI Assistant Instructions)"
+          label={t('settings.systemPrompt')}
           name="system_prompt"
           placeholder="Customize how the AI assistant should behave (optional)"
           icon={<PencilSquareIcon />}
@@ -174,7 +174,7 @@ export function PersonalInfoForm() {
             onClick={loadUserProfile}
             disabled={saving}
           >
-            Reset
+            {t('settings.reset')}
           </button>
 
           <button

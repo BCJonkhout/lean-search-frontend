@@ -8,7 +8,12 @@ const translations = {
     personalInfo: "Personal Info",
     language: "Language",
     send: "Send",
-    welcome: "Welcome"
+    welcome: "Welcome",
+    myFiles: "My Files",
+    sending: "Sending...",
+    loading: "Loading...",
+    loadingConversation: "Loading conversation...",
+    loadingFiles: "Loading files..."
   },
   auth: {
     email: "Email",
@@ -19,7 +24,12 @@ const translations = {
     noAccount: "Don't have an account?",
     haveAccount: "Already have an account?",
     createAccount: "Create an account",
-    signUpText: "Please sign up to use the platform"
+    signUpText: "Please sign up to use the platform",
+    passwordsDoNotMatch: "Passwords do not match",
+    enterFullName: "Please enter your full name",
+    registrationFailed: "Registration failed. Please try again.",
+    loginFailed: "Login failed. Please try again.",
+    errorOccurred: "Sorry, an error occurred while processing your message."
   },
   home: {
     welcome: "Welcome to Symbol Lean Search",
@@ -38,7 +48,42 @@ const translations = {
     title: "Settings",
     darkMode: "Dark Mode",
     name: "Name",
-    save: "Save"
+    save: "Save",
+    firstName: "First Name",
+    lastName: "Last Name",
+    organisation: "Organisation",
+    bio: "BIO",
+    systemPrompt: "System Prompt (AI Assistant Instructions)",
+    reset: "Reset",
+    profileUpdated: "Profile updated successfully!",
+    profileUpdateFailed: "Failed to update profile"
+  },
+  files: {
+    title: "My Files",
+    name: "File Name",
+    size: "Size",
+    status: "Status",
+    uploaded: "Uploaded",
+    actions: "Actions",
+    processing: "Processing",
+    processed: "Processed",
+    archived: "Archived",
+    failed: "Failed",
+    noFiles: "No files uploaded yet",
+    noFilesDesc: "Upload your first file to get started",
+    confirmDelete: "Are you sure you want to delete this file?",
+    deleteError: "Failed to delete file",
+    downloadError: "Failed to download file",
+    download: "Download",
+    delete: "Delete"
+  },
+  chats: {
+    seeAll: "See all chats",
+    searchTitle: "Search Conversations",
+    searchPlaceholder: "Search conversations...",
+    noSearchResults: "No conversations found",
+    noConversations: "No conversations yet",
+    recentChats: "Recent Chats"
   }
 };
 

@@ -27,7 +27,7 @@ export default function SignupWithPassword() {
         e.preventDefault();
 
         if (data.password !== data.confirmPassword) {
-            setError("Passwords do not match");
+            setError(t('auth.passwordsDoNotMatch'));
             return;
         }
 
@@ -42,7 +42,7 @@ export default function SignupWithPassword() {
             const surname = nameParts.slice(1).join(' ') || '';
 
             if (!first_name) {
-                setError("Please enter your full name");
+                setError(t('auth.enterFullName'));
                 setLoading(false);
                 return;
             }
@@ -62,7 +62,7 @@ export default function SignupWithPassword() {
         } catch (error: any) {
             setLoading(false);
             console.error('Registration error:', error);
-            setError(error.message || 'Registration failed. Please try again.');
+            setError(error.message || t('auth.registrationFailed'));
         }
     };
 
@@ -119,7 +119,7 @@ export default function SignupWithPassword() {
                     type="submit"
                     className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary p-4 font-medium text-white transition hover:bg-opacity-90"
                 >
-                    Sign Up
+                    {t('common.signUp')}
                     {loading && (
                         <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-white border-t-transparent dark:border-primary dark:border-t-transparent" />
                     )}

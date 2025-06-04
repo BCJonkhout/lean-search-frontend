@@ -101,7 +101,7 @@ export default function NewChatPage() {
                 const updated = [...prev];
                 const lastMessage = updated[updated.length - 1];
                 if (lastMessage.sender === "assistant") {
-                    lastMessage.text = "Sorry, an error occurred while processing your message.";
+                    lastMessage.text = t('auth.errorOccurred');
                 }
                 return updated;
             });
@@ -146,7 +146,7 @@ export default function NewChatPage() {
     if (loadingConversation) {
         return (
             <div className="flex items-center justify-center h-[calc(100vh-140px)]">
-                <div className="text-gray-500">Loading conversation...</div>
+                <div className="text-gray-500">{t('common.loadingConversation')}</div>
             </div>
         );
     }
@@ -202,7 +202,7 @@ export default function NewChatPage() {
                         disabled={isLoading}
                         className="bg-primary text-white font-medium px-6 h-12 rounded-lg translate-y-[-10px] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        {isLoading ? t('common.sending') || 'Sending...' : t('common.send')}
+                        {isLoading ? t('common.sending') : t('common.send')}
                     </button>
                 </form>
             </Paper>
