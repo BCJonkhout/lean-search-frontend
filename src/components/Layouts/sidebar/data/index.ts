@@ -1,4 +1,4 @@
-import {DocumentIcon, PlusIcon} from "@heroicons/react/24/outline";
+import {DocumentIcon, PlusIcon, FolderOpenIcon} from "@heroicons/react/24/outline";
 import {SettingsIcon} from "@/components/Layouts/header/user-info/icons";
 
 type NavSubItem = {
@@ -38,6 +38,12 @@ export const NAV_DATA: NavSection[] = [
         titleKey: "common.newFile",
         icon: DocumentIcon,
         url: "/new-file",
+        items: [],
+      },
+      {
+        titleKey: "common.myFiles",
+        icon: FolderOpenIcon,
+        url: "/files",
         items: [],
       }
     ]

@@ -64,6 +64,17 @@ class DocumentService {
 
     return apiClient.get<{ query: string; results: SearchResult[] }>(`/documents/search?${params}`);
   }
+
+  async downloadDocument(id: string): Promise<ApiResponse<Blob>> {
+    try {
+      const response = await apiClient.instance.get(`/documents/${id}/download`, {
+        responseType: 'blob',
+      });
+      return { success: true, data: response.data };
+    } catch (error) {
+      return { success: false, message: 'Download failed' };
+    }
+  }
 }
 
 export const documentService = new DocumentService();
