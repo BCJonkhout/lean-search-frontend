@@ -26,7 +26,7 @@ export const NAV_DATA: NavSection[] = [
       {
         titleKey: "common.newChat",
         icon: PlusIcon,
-        url: "/new-chat",
+        url: "/chat",
         items: [],
       },
     ]

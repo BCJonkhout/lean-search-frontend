@@ -57,7 +57,7 @@ export default function SignupWithPassword() {
             if (response.success && response.data) {
                 authService.storeAuthData(response.data);
                 // Redirect to new chat or dashboard
-                window.location.href = '/new-chat';
+                window.location.href = '/chat';
             }
         } catch (error: any) {
             setLoading(false);

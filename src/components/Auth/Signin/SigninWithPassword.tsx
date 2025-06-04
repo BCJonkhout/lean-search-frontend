@@ -45,7 +45,7 @@ export default function SigninWithPassword() {
 
         setTimeout(() => {
           setLoading(false);
-          router.push("/new-chat");
+          router.push("/chat");
         }, 1000);
       }
     } catch (error: any) {

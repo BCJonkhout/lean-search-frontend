@@ -3,19 +3,25 @@
 import { Logo } from "@/components/logo";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { NAV_DATA } from "./data";
 import { ArrowLeftIcon, ChevronUp } from "./icons";
 import { MenuItem } from "./menu-item";
 import { useSidebarContext } from "./sidebar-context";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { chatService, Conversation } from "@/services";
+import ChatSearchModal from "@/components/ChatSearchModal";
 
 export function Sidebar() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const currentConversationId = searchParams.get('id');
   const { setIsOpen, isOpen, isMobile, toggleSidebar } = useSidebarContext();
   const { t } = useLanguage();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [showSearchModal, setShowSearchModal] = useState(false);
 
   const toggleExpanded = (title: string) => {
     setExpandedItems((prev) => (prev.includes(title) ? [] : [title]));
@@ -43,6 +49,22 @@ export function Sidebar() {
       });
     });
   }, [pathname]);
+
+  useEffect(() => {
+    loadConversations();
+  }, []);
+
+  const loadConversations = async () => {
+    try {
+      const response = await chatService.getConversations();
+      if (response.success && response.data) {
+        // Take first 5 conversations (already sorted by recency in backend)
+        setConversations(response.data.conversations.slice(0, 5));
+      }
+    } catch (error) {
+      console.error("Failed to load conversations:", error);
+    }
+  };
 
   return (
     <>
@@ -89,23 +111,67 @@ export function Sidebar() {
 
           {/* Navigation */}
           <div className="custom-scrollbar mt-6 flex-1 overflow-y-auto pr-3 min-[850px]:mt-10">
-            {NAV_DATA.map((section) => (
-              <div key={section.label} className="mb-6">
-                <h2 className="mb-5 text-sm font-medium text-dark-4 dark:text-dark-6">
-                  {section.label}
-                </h2>
+            {NAV_DATA.map((section, sectionIndex) => (
+              <div key={section.label}>
+                <div className="mb-6">
+                  <h2 className="mb-5 text-sm font-medium text-dark-4 dark:text-dark-6">
+                    {section.label}
+                  </h2>
 
-                <nav role="navigation" aria-label={section.label}>
-                  <ul className="space-y-2">
-                    {section.items.map((item) => (
-                      <li key={item.titleKey}>
-                        {item.items.length ? (
-                          <div>
-                            <MenuItem
-                              isActive={item.items.some(
-                                ({ url }) => url === pathname,
+                  <nav role="navigation" aria-label={section.label}>
+                    <ul className="space-y-2">
+                      {section.items.map((item) => (
+                        <li key={item.titleKey}>
+                          {item.items.length ? (
+                            <div>
+                              <MenuItem
+                                isActive={item.items.some(
+                                  ({ url }) => url === pathname,
+                                )}
+                                onClick={() => toggleExpanded(item.titleKey)}
+                              >
+                                <item.icon
+                                  className="size-6 shrink-0"
+                                  aria-hidden="true"
+                                />
+
+                                <span>{t(item.titleKey)}</span>
+
+                                <ChevronUp
+                                  className={cn(
+                                    "ml-auto rotate-180 transition-transform duration-200",
+                                    expandedItems.includes(item.titleKey) &&
+                                      "rotate-0",
+                                  )}
+                                  aria-hidden="true"
+                                />
+                              </MenuItem>
+
+                              {expandedItems.includes(item.titleKey) && (
+                                <ul
+                                  className="ml-9 mr-0 space-y-1.5 pb-[15px] pr-0 pt-2"
+                                  role="menu"
+                                >
+                                  {item.items.map((subItem) => (
+                                    <li key={subItem.titleKey} role="none">
+                                      <MenuItem
+                                        as="link"
+                                        href={subItem.url}
+                                        isActive={pathname === subItem.url}
+                                      >
+                                        <span>{t(subItem.titleKey)}</span>
+                                      </MenuItem>
+                                    </li>
+                                  ))}
+                                </ul>
                               )}
-                              onClick={() => toggleExpanded(item.titleKey)}
+                            </div>
+                          ) : (
+                            <MenuItem
+                              className="flex items-center gap-3 py-3"
+                              as="link"
+                              href={item.url || "#"}
+                              isActive={pathname === item.url}
                             >
                               <item.icon
                                 className="size-6 shrink-0"
@@ -113,60 +179,66 @@ export function Sidebar() {
                               />
 
                               <span>{t(item.titleKey)}</span>
-
-                              <ChevronUp
-                                className={cn(
-                                  "ml-auto rotate-180 transition-transform duration-200",
-                                  expandedItems.includes(item.titleKey) &&
-                                    "rotate-0",
-                                )}
-                                aria-hidden="true"
-                              />
                             </MenuItem>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </nav>
+                </div>
 
-                            {expandedItems.includes(item.titleKey) && (
-                              <ul
-                                className="ml-9 mr-0 space-y-1.5 pb-[15px] pr-0 pt-2"
-                                role="menu"
-                              >
-                                {item.items.map((subItem) => (
-                                  <li key={subItem.titleKey} role="none">
-                                    <MenuItem
-                                      as="link"
-                                      href={subItem.url}
-                                      isActive={pathname === subItem.url}
-                                    >
-                                      <span>{t(subItem.titleKey)}</span>
-                                    </MenuItem>
-                                  </li>
-                                ))}
-                              </ul>
-                            )}
-                          </div>
-                        ) : (
+                {/* Add recent conversations after CHAT section */}
+                {section.label === "CHAT" && (
+                  <div className="mb-6">
+                    <h2 className="mb-5 text-sm font-medium text-dark-4 dark:text-dark-6">
+                      RECENT CHATS
+                    </h2>
+                    <nav role="navigation" aria-label="Recent chats">
+                      <ul className="space-y-2">
+                        {conversations.slice(0, 5).map((conversation) => (
+                          <li key={conversation.id}>
+                            <MenuItem
+                              as="link"
+                              href={`/chat?id=${conversation.id}`}
+                              isActive={pathname === `/chat` && currentConversationId === conversation.id}
+                              className="flex items-center gap-3 py-2"
+                            >
+                              <span className="truncate text-sm">
+                                {conversation.title || 'New conversation'}
+                              </span>
+                            </MenuItem>
+                          </li>
+                        ))}
+                        {/* See all chats option */}
+                        <li>
                           <MenuItem
-                            className="flex items-center gap-3 py-3"
-                            as="link"
-                            href={item.url || "#"}
-                            isActive={pathname === item.url}
+                            onClick={() => setShowSearchModal(true)}
+                            className="flex items-center gap-3 py-2 text-primary cursor-pointer"
+                            isActive={false}
                           >
-                            <item.icon
-                              className="size-6 shrink-0"
-                              aria-hidden="true"
-                            />
-
-                            <span>{t(item.titleKey)}</span>
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                            <span className="text-sm">
+                              {t('chats.seeAll') || 'See all chats'}
+                            </span>
                           </MenuItem>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                </nav>
+                        </li>
+                      </ul>
+                    </nav>
+                  </div>
+                )}
               </div>
             ))}
           </div>
         </div>
       </aside>
+
+      {/* Chat Search Modal */}
+      <ChatSearchModal 
+        open={showSearchModal} 
+        onClose={() => setShowSearchModal(false)} 
+      />
     </>
   );
 }

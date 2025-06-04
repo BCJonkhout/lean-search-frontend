@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 import Paper from "@mui/material/Paper";
 import InputGroup from "@/components/FormElements/InputGroup";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { chatService } from "@/services";
+import { chatService, ChatMessage } from "@/services";
 
 type Message = {
     sender: "user" | "assistant";
@@ -13,13 +14,54 @@ type Message = {
 
 export default function NewChatPage() {
     const { t } = useLanguage();
+    const searchParams = useSearchParams();
+    const conversationIdFromUrl = searchParams.get('id');
+    
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState("");
     const bottomRef = useRef<HTMLDivElement>(null);
     const currentMessageRef = useRef<string>("");
     const [hasStarted, setHasStarted] = useState(false);
-    const [conversationId, setConversationId] = useState<string | null>(null);
+    const [conversationId, setConversationId] = useState<string | null>(conversationIdFromUrl);
     const [isLoading, setIsLoading] = useState(false);
+    const [loadingConversation, setLoadingConversation] = useState(!!conversationIdFromUrl);
+
+    useEffect(() => {
+        if (conversationIdFromUrl) {
+            loadConversation();
+        } else {
+            // Clear state for new chat
+            setMessages([]);
+            setConversationId(null);
+            setHasStarted(false);
+            setLoadingConversation(false);
+        }
+    }, [conversationIdFromUrl]);
+
+    const loadConversation = async () => {
+        if (!conversationIdFromUrl) return;
+        
+        try {
+            setLoadingConversation(true);
+            const response = await chatService.getConversation(conversationIdFromUrl);
+            
+            if (response.success && response.data) {
+                const chatMessages = response.data.messages
+                    .sort((a, b) => a.message_order - b.message_order)
+                    .map((msg: ChatMessage) => ({
+                        sender: msg.sender_role === 'USER' ? 'user' as const : 'assistant' as const,
+                        text: msg.content
+                    }));
+                
+                setMessages(chatMessages);
+                setHasStarted(chatMessages.length > 0);
+            }
+        } catch (error) {
+            console.error("Failed to load conversation:", error);
+        } finally {
+            setLoadingConversation(false);
+        }
+    };
 
     const handleSend = async () => {
         if (!input.trim() || isLoading) return;
@@ -70,11 +112,16 @@ export default function NewChatPage() {
         };
 
         try {
+            const chatRequest: any = {
+                message: currentInput,
+            };
+            
+            if (conversationId) {
+                chatRequest.conversation_id = conversationId;
+            }
+
             await chatService.chat(
-                {
-                    message: currentInput,
-                    conversation_id: conversationId!,
-                },
+                chatRequest,
                 onChunk,
                 onError,
                 onComplete
@@ -89,10 +136,18 @@ export default function NewChatPage() {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
+    if (loadingConversation) {
+        return (
+            <div className="flex items-center justify-center h-[calc(100vh-140px)]">
+                <div className="text-gray-500">Loading conversation...</div>
+            </div>
+        );
+    }
+
     return (
         <div className="flex flex-col h-[calc(100vh-140px)]">
             <div className="flex-1 overflow-y-auto px-4 py-6 space-y-3 relative">
-                {!hasStarted && messages.length === 0 && (
+                {!hasStarted && messages.length === 0 && !conversationIdFromUrl && (
                     <div className="absolute inset-0 flex items-center justify-center">
                         <h1 className="text-4xl font-bold text-gray-400 text-center px-4">
                             {t('home.welcome')}
