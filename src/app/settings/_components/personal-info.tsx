@@ -1,7 +1,7 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import {
-  CallIcon,
   EmailIcon,
   PencilSquareIcon,
   UserIcon,
@@ -14,17 +14,94 @@ import { useLanguage } from "@/contexts/LanguageContext";
 export function PersonalInfoForm() {
   const { t } = useLanguage();
   
+  const [userData, setUserData] = useState({
+    first_name: '',
+    surname: '',
+    email: '',
+    organisation: '',
+    bio: '',
+    system_prompt: '',
+  });
+  
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    loadUserProfile();
+  }, []);
+
+  const loadUserProfile = async () => {
+    setLoading(true);
+    try {
+      const { authService } = await import('@/services');
+      const response = await authService.getProfile();
+      
+      if (response.success && response.data) {
+        const user = response.data.user;
+        setUserData({
+          first_name: user.first_name || '',
+          surname: user.surname || '',
+          email: user.email || '',
+          organisation: user.organisation || '',
+          bio: user.bio || '',
+          system_prompt: user.system_prompt || '',
+        });
+      }
+    } catch (error: any) {
+      console.error('Failed to load profile:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleInputChange = (name: string, value: string) => {
+    setUserData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+
+    try {
+      const { authService } = await import('@/services');
+      const response = await authService.updateProfile(userData);
+      
+      if (response.success) {
+        alert('Profile updated successfully!');
+      }
+    } catch (error: any) {
+      console.error('Failed to update profile:', error);
+      alert(error.message || 'Failed to update profile');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <ShowcaseSection title={t('common.personalInfo')} className="!p-7">
+        <div className="flex items-center justify-center py-8">
+          <span className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent" />
+        </div>
+      </ShowcaseSection>
+    );
+  }
+  
   return (
     <ShowcaseSection title={t('common.personalInfo')} className="!p-7">
-      <form>
+      <form onSubmit={handleSubmit}>
         <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
           <InputGroup
             className="w-full sm:w-1/2"
             type="text"
-            name="fullName"
-            label={t('settings.name')}
-            placeholder="David Jhon"
-            defaultValue="David Jhon"
+            name="first_name"
+            label="First Name"
+            placeholder="John"
+            value={userData.first_name}
+            handleChange={(e) => handleInputChange('first_name', e.target.value)}
             icon={<UserIcon />}
             iconPosition="left"
             height="sm"
@@ -33,11 +110,12 @@ export function PersonalInfoForm() {
           <InputGroup
             className="w-full sm:w-1/2"
             type="text"
-            name="phoneNumber"
-            label="Phone Number"
-            placeholder="+990 3343 7865"
-            defaultValue={"+990 3343 7865"}
-            icon={<CallIcon />}
+            name="surname"
+            label="Last Name"
+            placeholder="Doe"
+            value={userData.surname}
+            handleChange={(e) => handleInputChange('surname', e.target.value)}
+            icon={<UserIcon />}
             iconPosition="left"
             height="sm"
           />
@@ -48,8 +126,9 @@ export function PersonalInfoForm() {
           type="email"
           name="email"
           label={t('auth.email')}
-          placeholder="devidjond45@gmail.com"
-          defaultValue="devidjond45@gmail.com"
+          placeholder="john@example.com"
+          value={userData.email}
+          handleChange={(e) => handleInputChange('email', e.target.value)}
           icon={<EmailIcon />}
           iconPosition="left"
           height="sm"
@@ -58,10 +137,11 @@ export function PersonalInfoForm() {
         <InputGroup
           className="mb-5.5"
           type="text"
-          name="username"
-          label="Username"
-          placeholder="devidjhon24"
-          defaultValue="devidjhon24"
+          name="organisation"
+          label="Organisation"
+          placeholder="Your Company"
+          value={userData.organisation}
+          handleChange={(e) => handleInputChange('organisation', e.target.value)}
           icon={<UserIcon />}
           iconPosition="left"
           height="sm"
@@ -70,24 +150,42 @@ export function PersonalInfoForm() {
         <TextAreaGroup
           className="mb-5.5"
           label="BIO"
-          placeholder="Write your bio here"
+          name="bio"
+          placeholder="Tell us about yourself"
           icon={<PencilSquareIcon />}
-          defaultValue="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam lacinia turpis tortor, consequat efficitur mi congue a. Curabitur cursus, ipsum ut lobortis sodales, enim arcu pellentesque lectus ac suscipit diam sem a felis. Cras sapien ex, blandit eu dui et suscipit gravida nunc. Sed sed est quis dui."
+          value={userData.bio}
+          handleChange={(e:any) => handleInputChange('bio', e.target.value)}
+        />
+
+        <TextAreaGroup
+          className="mb-5.5"
+          label="System Prompt (AI Assistant Instructions)"
+          name="system_prompt"
+          placeholder="Customize how the AI assistant should behave (optional)"
+          icon={<PencilSquareIcon />}
+          value={userData.system_prompt}
+          handleChange={(e) => handleInputChange('system_prompt', e.target.value)}
         />
 
         <div className="flex justify-end gap-3">
           <button
             className="rounded-lg border border-stroke px-6 py-[7px] font-medium text-dark hover:shadow-1 dark:border-dark-3 dark:text-white"
             type="button"
+            onClick={loadUserProfile}
+            disabled={saving}
           >
-            Cancel
+            Reset
           </button>
 
           <button
-            className="rounded-lg bg-primary px-6 py-[7px] font-medium text-gray-2 hover:bg-opacity-90"
+            className="rounded-lg bg-primary px-6 py-[7px] font-medium text-gray-2 hover:bg-opacity-90 disabled:opacity-50 flex items-center gap-2"
             type="submit"
+            disabled={saving}
           >
             {t('settings.save')}
+            {saving && (
+              <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-white border-t-transparent" />
+            )}
           </button>
         </div>
       </form>

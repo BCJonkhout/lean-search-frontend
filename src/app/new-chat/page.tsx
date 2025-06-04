@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Paper from "@mui/material/Paper";
 import InputGroup from "@/components/FormElements/InputGroup";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { chatService } from "@/services";
 
 type Message = {
     sender: "user" | "assistant";
@@ -15,24 +16,72 @@ export default function NewChatPage() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState("");
     const bottomRef = useRef<HTMLDivElement>(null);
+    const currentMessageRef = useRef<string>("");
     const [hasStarted, setHasStarted] = useState(false);
+    const [conversationId, setConversationId] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleSend = () => {
-        if (!input.trim()) return;
+    const handleSend = async () => {
+        if (!input.trim() || isLoading) return;
 
         if (!hasStarted) setHasStarted(true);
 
         const userMessage: Message = { sender: "user", text: input };
         setMessages((prev) => [...prev, userMessage]);
+        const currentInput = input;
         setInput("");
+        setIsLoading(true);
 
-        setTimeout(() => {
-            const assistantMessage: Message = {
-                sender: "assistant",
-                text: `You said: "${input}"`,
-            };
-            setMessages((prev) => [...prev, assistantMessage]);
-        }, 500);
+        const aiMessage: Message = {
+            sender: "assistant",
+            text: "",
+        };
+
+        setMessages((prev) => [...prev, aiMessage]);
+        currentMessageRef.current = "";
+
+        const onChunk = (chunk: string) => {
+            currentMessageRef.current += chunk;
+            setMessages((prev) => {
+                const updated = [...prev];
+                const lastMessage = updated[updated.length - 1];
+                if (lastMessage.sender === "assistant") {
+                    lastMessage.text = currentMessageRef.current;
+                }
+                return updated;
+            });
+        };
+
+        const onError = (error: any) => {
+            console.error("Chat error:", error);
+            setMessages((prev) => {
+                const updated = [...prev];
+                const lastMessage = updated[updated.length - 1];
+                if (lastMessage.sender === "assistant") {
+                    lastMessage.text = "Sorry, an error occurred while processing your message.";
+                }
+                return updated;
+            });
+            setIsLoading(false);
+        };
+
+        const onComplete = () => {
+            setIsLoading(false);
+        };
+
+        try {
+            await chatService.chat(
+                {
+                    message: currentInput,
+                    conversation_id: conversationId!,
+                },
+                onChunk,
+                onError,
+                onComplete
+            );
+        } catch (error) {
+            onError(error);
+        }
     };
 
 
@@ -88,9 +137,10 @@ export default function NewChatPage() {
                     />
                     <button
                         type="submit"
-                        className="bg-primary text-white font-medium px-6 h-12 rounded-lg translate-y-[-10px]"
+                        disabled={isLoading}
+                        className="bg-primary text-white font-medium px-6 h-12 rounded-lg translate-y-[-10px] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        {t('common.send')}
+                        {isLoading ? t('common.sending') || 'Sending...' : t('common.send')}
                     </button>
                 </form>
             </Paper>

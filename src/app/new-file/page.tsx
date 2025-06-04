@@ -11,6 +11,7 @@ export default function NewFilePage() {
 
     const [file, setFile] = useState<File | null>(null);
     const [showAlert, setShowAlert] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -18,17 +19,34 @@ export default function NewFilePage() {
         }
     };
 
-    const handleSend = (e: React.FormEvent) => {
+    const handleSend = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!file) return;
 
-        console.log("File submitted:", file.name);
-        setShowAlert(true);
+        setLoading(true);
 
-        setTimeout(() => {
-            setShowAlert(false);
-            setFile(null);
-        }, 5000);
+        try {
+            const { documentService } = await import('@/services');
+            
+            const response = await documentService.uploadDocument({
+                file,
+                title: file.name.split('.').slice(0, -1).join('.'), // Remove extension for title
+                is_global: false,
+            });
+
+            if (response.success) {
+                setShowAlert(true);
+                setTimeout(() => {
+                    setShowAlert(false);
+                    setFile(null);
+                    setLoading(false);
+                }, 3000);
+            }
+        } catch (error: any) {
+            setLoading(false);
+            console.error('Upload error:', error);
+            alert(error.message || 'Upload failed. Please try again.');
+        }
     };
 
     return (
@@ -66,9 +84,13 @@ export default function NewFilePage() {
                     <div className="text-center">
                         <button
                             type="submit"
-                            className="w-full bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary/90 transition"
+                            disabled={loading}
+                            className="w-full bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                         >
                             {t('newFile.submit')}
+                            {loading && (
+                                <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-white border-t-transparent" />
+                            )}
                         </button>
                     </div>
                 )}

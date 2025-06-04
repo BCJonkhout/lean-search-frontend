@@ -23,7 +23,7 @@ export default function SignupWithPassword() {
         setError(""); // clear error on input change
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (data.password !== data.confirmPassword) {
@@ -33,10 +33,37 @@ export default function SignupWithPassword() {
 
         setLoading(true);
 
-        setTimeout(() => {
+        try {
+            const { authService } = await import('@/services');
+            
+            // Parse full name into first_name and surname
+            const nameParts = data.name.trim().split(' ');
+            const first_name = nameParts[0] || '';
+            const surname = nameParts.slice(1).join(' ') || '';
+
+            if (!first_name) {
+                setError("Please enter your full name");
+                setLoading(false);
+                return;
+            }
+
+            const response = await authService.register({
+                first_name,
+                surname,
+                email: data.email,
+                password: data.password,
+            });
+
+            if (response.success && response.data) {
+                authService.storeAuthData(response.data);
+                // Redirect to new chat or dashboard
+                window.location.href = '/new-chat';
+            }
+        } catch (error: any) {
             setLoading(false);
-            console.log("User registered:", data);
-        }, 1000);
+            console.error('Registration error:', error);
+            setError(error.message || 'Registration failed. Please try again.');
+        }
     };
 
     return (

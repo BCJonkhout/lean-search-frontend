@@ -26,23 +26,33 @@ export default function SigninWithPassword() {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     setLoading(true);
 
-    // Simulate login and store user info
-    window.localStorage.setItem("token", "abc");
-    window.localStorage.setItem("name", "John Doe");
-    window.localStorage.setItem("email", "john@doe.com");
-    window.dispatchEvent(new Event("authChanged"));
+    try {
+      const { authService } = await import('@/services');
+      
+      const response = await authService.login({
+        email: data.email,
+        password: data.password,
+      });
 
-    setShowSuccess(true); // show alert
+      if (response.success && response.data) {
+        authService.storeAuthData(response.data);
+        setShowSuccess(true);
 
-    setTimeout(() => {
+        setTimeout(() => {
+          setLoading(false);
+          router.push("/new-chat");
+        }, 1000);
+      }
+    } catch (error: any) {
       setLoading(false);
-      router.push("/new-chat");
-    }, 3000);
+      console.error('Login error:', error);
+      alert(error.message || 'Login failed. Please try again.');
+    }
   };
 
   return (
