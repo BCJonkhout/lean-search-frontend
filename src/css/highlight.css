@@ -1,0 +1,122 @@
+/* Syntax highlighting for code blocks */
+.hljs {
+  background: #f8f9fa;
+  color: #24292e;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+}
+
+.dark .hljs {
+  background: #1e1e1e;
+  color: #d4d4d4;
+}
+
+/* Keywords */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-type {
+  color: #d73a49;
+}
+
+.dark .hljs-keyword,
+.dark .hljs-selector-tag,
+.dark .hljs-type {
+  color: #569cd6;
+}
+
+/* Strings */
+.hljs-string,
+.hljs-doctag {
+  color: #032f62;
+}
+
+.dark .hljs-string,
+.dark .hljs-doctag {
+  color: #ce9178;
+}
+
+/* Comments */
+.hljs-comment,
+.hljs-quote {
+  color: #6a737d;
+  font-style: italic;
+}
+
+.dark .hljs-comment,
+.dark .hljs-quote {
+  color: #6a9955;
+}
+
+/* Numbers */
+.hljs-number,
+.hljs-literal {
+  color: #005cc5;
+}
+
+.dark .hljs-number,
+.dark .hljs-literal {
+  color: #b5cea8;
+}
+
+/* Functions */
+.hljs-function .hljs-title,
+.hljs-title.function_ {
+  color: #6f42c1;
+}
+
+.dark .hljs-function .hljs-title,
+.dark .hljs-title.function_ {
+  color: #dcdcaa;
+}
+
+/* Variables */
+.hljs-variable,
+.hljs-template-variable {
+  color: #e36209;
+}
+
+.dark .hljs-variable,
+.dark .hljs-template-variable {
+  color: #9cdcfe;
+}
+
+/* Attributes */
+.hljs-attr,
+.hljs-attribute {
+  color: #6f42c1;
+}
+
+.dark .hljs-attr,
+.dark .hljs-attribute {
+  color: #92c5f8;
+}
+
+/* Built-ins */
+.hljs-built_in,
+.hljs-class .hljs-title {
+  color: #22863a;
+}
+
+.dark .hljs-built_in,
+.dark .hljs-class .hljs-title {
+  color: #4ec9b0;
+}
+
+/* Meta */
+.hljs-meta {
+  color: #6a737d;
+}
+
+.dark .hljs-meta {
+  color: #808080;
+}
+
+/* Punctuation */
+.hljs-punctuation {
+  color: #24292e;
+}
+
+.dark .hljs-punctuation {
+  color: #d4d4d4;
+}

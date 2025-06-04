@@ -6,6 +6,7 @@ import Paper from "@mui/material/Paper";
 import InputGroup from "@/components/FormElements/InputGroup";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { chatService, ChatMessage } from "@/services";
+import { Markdown } from "@/components/ui/markdown";
 
 type Message = {
     sender: "user" | "assistant";
@@ -164,11 +165,19 @@ export default function NewChatPage() {
                 {messages.map((msg, i) => (
                     <div
                         key={i}
-                        className={`max-w-[75%] text-lg px-4 py-2 rounded-xl whitespace-pre-wrap ${
-                            msg.sender === "user" ? "bg-blue-100 ml-auto" : "bg-blue-50 mr-auto"
+                        className={`max-w-[75%] px-4 py-3 rounded-xl ${
+                            msg.sender === "user" 
+                                ? "bg-blue-100 dark:bg-blue-900 ml-auto" 
+                                : "bg-blue-50 dark:bg-gray-800 mr-auto"
                         }`}
                     >
-                        {msg.text}
+                        {msg.sender === "assistant" ? (
+                            <Markdown>{msg.text}</Markdown>
+                        ) : (
+                            <div className="text-gray-900 dark:text-gray-100 whitespace-pre-wrap">
+                                {msg.text}
+                            </div>
+                        )}
                     </div>
                 ))}
                 <div ref={bottomRef} />
