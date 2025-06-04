@@ -54,6 +54,7 @@ export default function NewChatPage() {
                     }));
                 
                 setMessages(chatMessages);
+                setConversationId(response.data.conversation.id);
                 setHasStarted(chatMessages.length > 0);
             }
         } catch (error) {
