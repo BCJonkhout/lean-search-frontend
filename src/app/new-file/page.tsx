@@ -4,12 +4,17 @@ import React, { useState } from "react";
 import InputGroup from "@/components/FormElements/InputGroup";
 import { ShowcaseSection } from "@/components/Layouts/showcase-section";
 import { Alert } from "@/components/ui-elements/alert";
+import CheckboxOne from "@/components/FormElements/Checkboxes/CheckboxOne";
 import {useLanguage} from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { documentService } from "@/services";
 
 export default function NewFilePage() {
     const { t } = useLanguage();
+    const { isAdmin } = useAuth();
 
     const [file, setFile] = useState<File | null>(null);
+    const [isGlobal, setIsGlobal] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
     const [loading, setLoading] = useState(false);
     const [errorAlert, setErrorAlert] = useState<{title: string, description: string} | null>(null);
@@ -27,12 +32,10 @@ export default function NewFilePage() {
         setLoading(true);
 
         try {
-            const { documentService } = await import('@/services');
-            
             const response = await documentService.uploadDocument({
                 file,
                 title: file.name.split('.').slice(0, -1).join('.'), // Remove extension for title
-                is_global: false,
+                is_global: isAdmin ? isGlobal : false,
             });
 
             if (response.success) {
@@ -40,6 +43,7 @@ export default function NewFilePage() {
                 setTimeout(() => {
                     setShowAlert(false);
                     setFile(null);
+                    setIsGlobal(false);
                     setLoading(false);
                 }, 3000);
             }
@@ -69,6 +73,20 @@ export default function NewFilePage() {
                         placeholder={t('newFile.attachFile')}
                         handleChange={handleFileChange}
                     />
+                    
+                    {isAdmin && file && (
+                        <div className="space-y-2">
+                            <CheckboxOne
+                                id="globalFile"
+                                label={t('admin.makeGlobal')}
+                                checked={isGlobal}
+                                onChange={(e) => setIsGlobal(e.target.checked)}
+                            />
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                                {t('admin.globalFileDesc')}
+                            </p>
+                        </div>
+                    )}
                 </ShowcaseSection>
 
                 {showAlert && (

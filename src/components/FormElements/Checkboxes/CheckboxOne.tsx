@@ -1,36 +1,40 @@
-import { useState } from "react";
+interface CheckboxOneProps {
+  id: string;
+  label: string;
+  checked: boolean;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  className?: string;
+}
 
-const CheckboxOne = () => {
-  const [isChecked, setIsChecked] = useState<boolean>(false);
+const CheckboxOne = ({ id, label, checked, onChange, className = "" }: CheckboxOneProps) => {
 
   return (
-    <div>
+    <div className={className}>
       <label
-        htmlFor="checkboxLabelOne"
+        htmlFor={id}
         className="flex cursor-pointer select-none items-center text-body-sm font-medium"
       >
         <div className="relative">
           <input
             type="checkbox"
-            id="checkboxLabelOne"
+            id={id}
             className="sr-only"
-            onChange={() => {
-              setIsChecked(!isChecked);
-            }}
+            checked={checked}
+            onChange={onChange}
           />
           <div
             className={`mr-2 flex h-5 w-5 items-center justify-center rounded border ${
-              isChecked
+              checked
                 ? "border-primary bg-gray-2 dark:bg-transparent"
                 : "border-dark-5 dark:border-dark-6"
             }`}
           >
             <span
-              className={`h-2.5 w-2.5 rounded-sm ${isChecked && "bg-primary"}`}
+              className={`h-2.5 w-2.5 rounded-sm ${checked && "bg-primary"}`}
             ></span>
           </div>
         </div>
-        Checkbox Text
+        {label}
       </label>
     </div>
   );

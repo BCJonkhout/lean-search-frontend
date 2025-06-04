@@ -10,6 +10,8 @@ const translations = {
     send: "Send",
     welcome: "Welcome",
     myFiles: "My Files",
+    users: "Users",
+    globalFiles: "Global Files",
     sending: "Sending...",
     loading: "Loading...",
     loadingConversation: "Loading conversation...",
@@ -19,6 +21,7 @@ const translations = {
   navigation: {
     chat: "CHAT",
     files: "FILES",
+    admin: "ADMIN",
     others: "OTHERS"
   },
   auth: {
@@ -83,6 +86,21 @@ const translations = {
     downloadError: "Failed to download file",
     download: "Download",
     delete: "Delete"
+  },
+  admin: {
+    title: "Admin Panel",
+    usersTitle: "User Management",
+    globalFilesTitle: "Global Files",
+    deleteUser: "Delete User",
+    confirmDeleteUser: "Are you sure you want to delete this user? This action cannot be undone.",
+    userDeleted: "User deleted successfully",
+    deleteUserError: "Failed to delete user",
+    uploadGlobalFile: "Upload Global File",
+    globalFileDesc: "Global files are available to all users for AI conversations",
+    makeGlobal: "Make Global",
+    userFiles: "User Files",
+    noUsers: "No users found",
+    totalUsers: "Total Users"
   },
   chats: {
     seeAll: "See all chats",

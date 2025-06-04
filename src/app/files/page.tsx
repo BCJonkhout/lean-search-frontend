@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { documentService } from "@/services";
 import {
   Table,
@@ -14,6 +15,7 @@ import {
 } from "@/components/ui/table";
 import { Alert } from "@/components/ui-elements/alert";
 import { Button } from "@/components/ui-elements/button";
+import SwitcherOne from "@/components/FormElements/Switchers/SwitcherOne";
 
 interface FileItem {
   id: string;
@@ -24,15 +26,18 @@ interface FileItem {
   created_at: string;
   updated_at: string;
   status: 'pending_processing' | 'active' | 'archived' | 'error_processing';
+  is_global?: boolean;
 }
 
 export default function FilesPage() {
   const { t } = useLanguage();
+  const { isAdmin } = useAuth();
   const router = useRouter();
   const [files, setFiles] = useState<FileItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [alert, setAlert] = useState<{variant: 'error' | 'success' | 'warning', title: string, description: string} | null>(null);
+  const [showGlobalFiles, setShowGlobalFiles] = useState(false);
 
   useEffect(() => {
     loadFiles();
@@ -54,6 +59,15 @@ export default function FilesPage() {
       setLoading(false);
     }
   };
+
+  // Filter files based on the toggle
+  const filteredFiles = files.filter(file => {
+    if (showGlobalFiles) {
+      return file.is_global === true;
+    } else {
+      return file.is_global !== true; // This includes both false and undefined
+    }
+  });
 
   const handleDelete = async (fileId: string) => {
     if (!confirm(t('files.confirmDelete'))) {
@@ -157,30 +171,48 @@ export default function FilesPage() {
           />
         </div>
       )}
-      <div className="mb-7.5 flex justify-between items-start">
-        <div>
-          <h1 className="text-body-2xlg font-bold text-dark dark:text-white mb-2">
-            {t('files.title')}
-          </h1>
-          <div className="text-sm text-gray-500 dark:text-gray-400">
-            {files.length} {files.length === 1 ? 'file' : 'files'}
+      <div className="mb-7.5">
+        <div className="flex justify-between items-start mb-4">
+          <div>
+            <h1 className="text-body-2xlg font-bold text-dark dark:text-white mb-2">
+              {showGlobalFiles ? t('admin.globalFilesTitle') : t('files.title')}
+            </h1>
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              {filteredFiles.length} {filteredFiles.length === 1 ? 'file' : 'files'}
+            </div>
           </div>
+          <Button
+            label={t('files.uploadFile')}
+            variant="primary"
+            shape="rounded"
+            size="small"
+            onClick={() => router.push('/new-file')}
+            icon={
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              </svg>
+            }
+          />
         </div>
-        <Button
-          label={t('files.uploadFile')}
-          variant="primary"
-          shape="rounded"
-          size="small"
-          onClick={() => router.push('/new-file')}
-          icon={
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-            </svg>
-          }
-        />
+        
+        {isAdmin && (
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-medium text-dark dark:text-white">
+              {t('admin.userFiles')}
+            </span>
+            <SwitcherOne
+              id="globalFileSwitch"
+              enabled={showGlobalFiles}
+              setEnabled={setShowGlobalFiles}
+            />
+            <span className="text-sm font-medium text-dark dark:text-white">
+              {t('common.globalFiles')}
+            </span>
+          </div>
+        )}
       </div>
 
-      {files.length === 0 ? (
+      {filteredFiles.length === 0 ? (
         <div className="grid rounded-[10px] bg-white px-7.5 pb-15 pt-7.5 shadow-1 dark:bg-gray-dark dark:shadow-card">
           <div className="text-center py-15">
             <div className="text-gray-400 dark:text-gray-500 mb-4">
@@ -220,7 +252,7 @@ export default function FilesPage() {
             </TableHeader>
 
             <TableBody>
-              {files.map((file) => (
+              {filteredFiles.map((file) => (
                 <TableRow
                   key={file.id}
                   className="text-base font-medium text-dark dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800"
@@ -233,8 +265,13 @@ export default function FilesPage() {
                         </svg>
                       </div>
                       <div>
-                        <div className="font-medium">
+                        <div className="font-medium flex items-center gap-2">
                           {file.title}
+                          {file.is_global && (
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+                              Global
+                            </span>
+                          )}
                         </div>
                         <div className="text-sm text-gray-500 dark:text-gray-400">
                           {file.mime_type || 'Unknown type'}

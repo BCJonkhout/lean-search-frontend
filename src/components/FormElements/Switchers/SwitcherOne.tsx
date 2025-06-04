@@ -1,22 +1,25 @@
-import { useState } from "react";
+interface SwitcherOneProps {
+  id: string;
+  enabled: boolean;
+  setEnabled: (enabled: boolean) => void;
+  className?: string;
+}
 
-const SwitcherOne = () => {
-  const [enabled, setEnabled] = useState<boolean>(false);
+const SwitcherOne = ({ id, enabled, setEnabled, className = "" }: SwitcherOneProps) => {
 
   return (
-    <div>
+    <div className={className}>
       <label
-        htmlFor="toggle1"
+        htmlFor={id}
         className="flex cursor-pointer select-none items-center"
       >
         <div className="relative">
           <input
             type="checkbox"
-            id="toggle1"
+            id={id}
             className="sr-only"
-            onChange={() => {
-              setEnabled(!enabled);
-            }}
+            checked={enabled}
+            onChange={(e) => setEnabled(e.target.checked)}
           />
           <div className="block h-8 w-14 rounded-full bg-gray-3 dark:bg-[#5A616B]"></div>
           <div

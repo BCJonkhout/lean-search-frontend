@@ -4,6 +4,7 @@ export interface User {
   id: string;
   first_name: string;
   surname: string;
+  name?: string;
   email: string;
   organisation?: string;
   bio?: string;

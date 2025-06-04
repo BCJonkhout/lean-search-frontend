@@ -10,6 +10,8 @@ const translations = {
     send: "Verstuur",
     welcome: "Welkom",
     myFiles: "Mijn Bestanden",
+    users: "Gebruikers",
+    globalFiles: "Globale Bestanden",
     sending: "Versturen...",
     loading: "Laden...",
     loadingConversation: "Gesprek laden...",
@@ -19,6 +21,7 @@ const translations = {
   navigation: {
     chat: "CHAT",
     files: "BESTANDEN",
+    admin: "ADMIN",
     others: "OVERIGE"
   },
   auth: {
@@ -83,6 +86,21 @@ const translations = {
     downloadError: "Bestand downloaden mislukt",
     download: "Download",
     delete: "Verwijder"
+  },
+  admin: {
+    title: "Admin Paneel",
+    usersTitle: "Gebruikersbeheer",
+    globalFilesTitle: "Globale Bestanden",
+    deleteUser: "Gebruiker Verwijderen",
+    confirmDeleteUser: "Weet je zeker dat je deze gebruiker wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+    userDeleted: "Gebruiker succesvol verwijderd",
+    deleteUserError: "Gebruiker verwijderen mislukt",
+    uploadGlobalFile: "Globaal Bestand Uploaden",
+    globalFileDesc: "Globale bestanden zijn beschikbaar voor alle gebruikers in AI gesprekken",
+    makeGlobal: "Maak Globaal",
+    userFiles: "Gebruikers Bestanden",
+    noUsers: "Geen gebruikers gevonden",
+    totalUsers: "Totaal Gebruikers"
   },
   chats: {
     seeAll: "Alle chats bekijken",

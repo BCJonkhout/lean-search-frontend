@@ -5,11 +5,12 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { NAV_DATA } from "./data";
+import { NAV_DATA, filterNavItemsByRole } from "./data";
 import { ArrowLeftIcon, ChevronUp } from "./icons";
 import { MenuItem } from "./menu-item";
 import { useSidebarContext } from "./sidebar-context";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { chatService, Conversation } from "@/services";
 import ChatSearchModal from "@/components/ChatSearchModal";
 
@@ -19,6 +20,7 @@ export function Sidebar() {
   const currentConversationId = searchParams.get('id');
   const { setIsOpen, isOpen, isMobile, toggleSidebar } = useSidebarContext();
   const { t } = useLanguage();
+  const { user } = useAuth();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [showSearchModal, setShowSearchModal] = useState(false);
@@ -127,16 +129,22 @@ export function Sidebar() {
 
           {/* Navigation */}
           <div className="custom-scrollbar mt-6 flex-1 overflow-y-auto pr-3 min-[850px]:mt-10">
-            {NAV_DATA.map((section) => (
-              <div key={section.labelKey}>
-                <div className="mb-6">
-                  <h2 className="mb-5 text-sm font-medium text-dark-4 dark:text-dark-6">
-                    {t(section.labelKey)}
-                  </h2>
+            {NAV_DATA.map((section) => {
+              const filteredItems = filterNavItemsByRole(section.items, user?.role || null);
+              
+              // Don't render section if no items are visible
+              if (filteredItems.length === 0) return null;
+              
+              return (
+                <div key={section.labelKey}>
+                  <div className="mb-6">
+                    <h2 className="mb-5 text-sm font-medium text-dark-4 dark:text-dark-6">
+                      {t(section.labelKey)}
+                    </h2>
 
-                  <nav role="navigation" aria-label={t(section.labelKey)}>
-                    <ul className="space-y-2">
-                      {section.items.map((item) => (
+                    <nav role="navigation" aria-label={t(section.labelKey)}>
+                      <ul className="space-y-2">
+                        {filteredItems.map((item) => (
                         <li key={item.titleKey}>
                           {item.items.length ? (
                             <div>
@@ -244,8 +252,10 @@ export function Sidebar() {
                     </nav>
                   </div>
                 )}
-              </div>
-            ))}
+                  </div>
+                );
+              }
+            )}
           </div>
         </div>
       </aside>
