@@ -57,6 +57,19 @@ export function Sidebar() {
     }
   }, [pathname]);
 
+  useEffect(() => {
+    // Listen for new conversation creation
+    const handleConversationCreated = () => {
+      loadConversations();
+    };
+
+    window.addEventListener('conversationCreated', handleConversationCreated);
+    
+    return () => {
+      window.removeEventListener('conversationCreated', handleConversationCreated);
+    };
+  }, []);
+
   const loadConversations = async () => {
     try {
       const response = await chatService.getConversations();

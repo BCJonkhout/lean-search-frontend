@@ -108,8 +108,14 @@ export default function NewChatPage() {
             setIsLoading(false);
         };
 
-        const onComplete = () => {
+        const onComplete = (newConversationId?: string) => {
             setIsLoading(false);
+            // If we got a new conversation ID, update our state
+            if (newConversationId && !conversationId) {
+                setConversationId(newConversationId);
+                // Trigger sidebar refresh by dispatching custom event
+                window.dispatchEvent(new Event('conversationCreated'));
+            }
         };
 
         try {

@@ -41,8 +41,8 @@ class ChatService {
     chatRequest: ChatRequest,
     onChunk: (chunk: string) => void,
     onError: (error: any) => void,
-    onComplete: () => void
-  ): Promise<{ message: string }> {
+    onComplete: (conversationId?: string) => void
+  ): Promise<{ message: string; conversationId?: string }> {
     try {
       const response = await apiClient.postStream('/ai/chat', chatRequest);
 
@@ -54,6 +54,7 @@ class ChatService {
       const decoder = new TextDecoder();
       let buffer = "";
       let fullResponse = "";
+      let responseConversationId: string | undefined;
 
       while (true) {
         const { done, value } = await reader.read();
@@ -80,8 +81,9 @@ class ChatService {
                 fullResponse += data.token;
                 onChunk(data.token);
               } else if (data.done) {
-                onComplete();
-                return { message: fullResponse };
+                responseConversationId = data.conversation_id;
+                onComplete(responseConversationId);
+                return { message: fullResponse, conversationId: responseConversationId };
               } else if (data.error) {
                 onError(new Error(data.error));
                 return { message: fullResponse };
@@ -95,8 +97,8 @@ class ChatService {
         }
       }
 
-      onComplete();
-      return { message: fullResponse };
+      onComplete(responseConversationId);
+      return { message: fullResponse, conversationId: responseConversationId };
     } catch (error) {
       onError(error);
       throw error;
