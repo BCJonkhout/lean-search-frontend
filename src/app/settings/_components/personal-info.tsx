@@ -10,6 +10,7 @@ import InputGroup from "@/components/FormElements/InputGroup";
 import { TextAreaGroup } from "@/components/FormElements/InputGroup/text-area";
 import { ShowcaseSection } from "@/components/Layouts/showcase-section";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Alert } from "@/components/ui-elements/alert";
 
 export function PersonalInfoForm() {
   const { t } = useLanguage();
@@ -25,6 +26,7 @@ export function PersonalInfoForm() {
   
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [alert, setAlert] = useState<{variant: 'error' | 'success' | 'warning', title: string, description: string} | null>(null);
 
   useEffect(() => {
     loadUserProfile();
@@ -70,11 +72,11 @@ export function PersonalInfoForm() {
       const response = await authService.updateProfile(userData);
       
       if (response.success) {
-        alert(t('settings.profileUpdated'));
+        setAlert({variant: 'success', title: t('settings.profileUpdated'), description: ''});
       }
     } catch (error: any) {
       console.error('Failed to update profile:', error);
-      alert(error.message || t('settings.profileUpdateFailed'));
+      setAlert({variant: 'error', title: error.message || t('settings.profileUpdateFailed'), description: ''});
     } finally {
       setSaving(false);
     }
@@ -91,7 +93,17 @@ export function PersonalInfoForm() {
   }
   
   return (
-    <ShowcaseSection title={t('common.personalInfo')} className="!p-7">
+    <>
+      {alert && (
+        <div className="mb-6">
+          <Alert
+            variant={alert.variant}
+            title={alert.title}
+            description={alert.description}
+          />
+        </div>
+      )}
+      <ShowcaseSection title={t('common.personalInfo')} className="!p-7">
       <form onSubmit={handleSubmit}>
         <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
           <InputGroup
@@ -189,6 +201,7 @@ export function PersonalInfoForm() {
           </button>
         </div>
       </form>
-    </ShowcaseSection>
+      </ShowcaseSection>
+    </>
   );
 }

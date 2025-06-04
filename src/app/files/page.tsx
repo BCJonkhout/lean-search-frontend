@@ -11,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Alert } from "@/components/ui-elements/alert";
 
 interface FileItem {
   id: string;
@@ -28,6 +29,7 @@ export default function FilesPage() {
   const [files, setFiles] = useState<FileItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [alert, setAlert] = useState<{variant: 'error' | 'success' | 'warning', title: string, description: string} | null>(null);
 
   useEffect(() => {
     loadFiles();
@@ -60,11 +62,11 @@ export default function FilesPage() {
       if (response.success) {
         setFiles(files.filter(file => file.id !== fileId));
       } else {
-        alert(t('files.deleteError'));
+        setAlert({variant: 'error', title: t('files.deleteError'), description: ''});
       }
     } catch (error) {
       console.error("Error deleting file:", error);
-      alert(t('files.deleteError'));
+      setAlert({variant: 'error', title: t('files.deleteError'), description: ''});
     }
   };
 
@@ -82,11 +84,11 @@ export default function FilesPage() {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
       } else {
-        alert(t('files.downloadError'));
+        setAlert({variant: 'error', title: t('files.downloadError'), description: ''});
       }
     } catch (error) {
       console.error("Error downloading file:", error);
-      alert(t('files.downloadError'));
+      setAlert({variant: 'error', title: t('files.downloadError'), description: ''});
     }
   };
 
@@ -143,6 +145,15 @@ export default function FilesPage() {
 
   return (
     <div className="max-w-7xl mx-auto p-6">
+      {alert && (
+        <div className="mb-6">
+          <Alert
+            variant={alert.variant}
+            title={alert.title}
+            description={alert.description}
+          />
+        </div>
+      )}
       <div className="mb-7.5">
         <h1 className="text-body-2xlg font-bold text-dark dark:text-white mb-2">
           {t('files.title')}

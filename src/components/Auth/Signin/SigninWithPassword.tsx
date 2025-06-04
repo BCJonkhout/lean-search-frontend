@@ -18,6 +18,7 @@ export default function SigninWithPassword() {
 
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [errorAlert, setErrorAlert] = useState<{title: string, description: string} | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setData({
@@ -51,7 +52,7 @@ export default function SigninWithPassword() {
     } catch (error: any) {
       setLoading(false);
       console.error('Login error:', error);
-      alert(error.message || 'Login failed. Please try again.');
+      setErrorAlert({title: 'Login Failed', description: error.message || 'Login failed. Please try again.'});
     }
   };
 
@@ -63,6 +64,16 @@ export default function SigninWithPassword() {
                   variant="success"
                   title={t('common.signIn')}
                   description={t('home.description')}
+              />
+            </div>
+        )}
+        
+        {errorAlert && (
+            <div className="max-w-4xl mx-auto w-full mb-6">
+              <Alert
+                  variant="error"
+                  title={errorAlert.title}
+                  description={errorAlert.description}
               />
             </div>
         )}

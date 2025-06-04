@@ -11,6 +11,7 @@ import Link from "next/link";
 import { useState, useEffect, useCallback } from "react";
 import { LogOutIcon, SettingsIcon, UserIcon } from "./icons";
 import { Avatar } from "@mui/material";
+import { authService } from "@/services";
 
 export function UserInfo() {
     const [isOpen, setIsOpen] = useState(false);
@@ -43,11 +44,10 @@ export function UserInfo() {
     }, [refreshUserState]);
 
     const handleLogout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("name");
-        localStorage.removeItem("email");
+        authService.clearAuthData()
         refreshUserState();
         setIsOpen(false);
+        window.location.href = '/auth/sign-in';
     };
 
     const getInitials = (fullName: string | null) => {

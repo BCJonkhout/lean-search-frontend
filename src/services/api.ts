@@ -121,8 +121,7 @@ class ApiClient {
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+      window.location.href = '/auth/sign-in';
     }
 
     return response;

@@ -12,6 +12,7 @@ export default function NewFilePage() {
     const [file, setFile] = useState<File | null>(null);
     const [showAlert, setShowAlert] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [errorAlert, setErrorAlert] = useState<{title: string, description: string} | null>(null);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -45,7 +46,7 @@ export default function NewFilePage() {
         } catch (error: any) {
             setLoading(false);
             console.error('Upload error:', error);
-            alert(error.message || 'Upload failed. Please try again.');
+            setErrorAlert({title: 'Upload Failed', description: error.message || 'Upload failed. Please try again.'});
         }
     };
 
@@ -76,6 +77,16 @@ export default function NewFilePage() {
                             variant="success"
                             title={t('newFile.success')}
                             description={`"${file?.name}" ${t('newFile.received')}`}
+                        />
+                    </div>
+                )}
+                
+                {errorAlert && (
+                    <div className="max-w-4xl mx-auto w-full">
+                        <Alert
+                            variant="error"
+                            title={errorAlert.title}
+                            description={errorAlert.description}
                         />
                     </div>
                 )}
