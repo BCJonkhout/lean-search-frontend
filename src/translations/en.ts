@@ -13,7 +13,8 @@ const translations = {
     sending: "Sending...",
     loading: "Loading...",
     loadingConversation: "Loading conversation...",
-    loadingFiles: "Loading files..."
+    loadingFiles: "Loading files...",
+    thinking: "AI is thinking..."
   },
   auth: {
     email: "Email",

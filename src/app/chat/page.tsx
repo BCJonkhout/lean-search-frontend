@@ -7,6 +7,7 @@ import InputGroup from "@/components/FormElements/InputGroup";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { chatService, ChatMessage } from "@/services";
 import { Markdown } from "@/components/ui/markdown";
+import { TypingIndicator } from "@/components/ui/typing-indicator";
 
 type Message = {
     sender: "user" | "assistant";
@@ -22,9 +23,11 @@ export default function NewChatPage() {
     const [input, setInput] = useState("");
     const bottomRef = useRef<HTMLDivElement>(null);
     const currentMessageRef = useRef<string>("");
+    const isWaitingRef = useRef<boolean>(false);
     const [hasStarted, setHasStarted] = useState(false);
     const [conversationId, setConversationId] = useState<string | null>(conversationIdFromUrl);
     const [isLoading, setIsLoading] = useState(false);
+    const [isWaitingForResponse, setIsWaitingForResponse] = useState(false);
     const [loadingConversation, setLoadingConversation] = useState(!!conversationIdFromUrl);
 
     useEffect(() => {
@@ -75,21 +78,34 @@ export default function NewChatPage() {
         const currentInput = input;
         setInput("");
         setIsLoading(true);
+        setIsWaitingForResponse(true);
+        isWaitingRef.current = true;
 
-        const aiMessage: Message = {
-            sender: "assistant",
-            text: "",
-        };
-
-        setMessages((prev) => [...prev, aiMessage]);
+        // Don't add AI message yet - show thinking indicator first
         currentMessageRef.current = "";
 
         const onChunk = (chunk: string) => {
+            // Check if this is the first chunk
+            if (isWaitingRef.current) {
+                console.log("First chunk received, creating AI message");
+                isWaitingRef.current = false;
+                setIsWaitingForResponse(false);
+                currentMessageRef.current = chunk;
+                
+                // Add new AI message with first chunk
+                setMessages((prev) => [...prev, {
+                    sender: "assistant",
+                    text: chunk
+                }]);
+                return;
+            }
+            
+            // Continue streaming to existing message
             currentMessageRef.current += chunk;
             setMessages((prev) => {
                 const updated = [...prev];
                 const lastMessage = updated[updated.length - 1];
-                if (lastMessage.sender === "assistant") {
+                if (lastMessage && lastMessage.sender === "assistant") {
                     lastMessage.text = currentMessageRef.current;
                 }
                 return updated;
@@ -98,19 +114,35 @@ export default function NewChatPage() {
 
         const onError = (error: any) => {
             console.error("Chat error:", error);
-            setMessages((prev) => {
-                const updated = [...prev];
-                const lastMessage = updated[updated.length - 1];
-                if (lastMessage.sender === "assistant") {
-                    lastMessage.text = t('auth.errorOccurred');
-                }
-                return updated;
-            });
+            
+            // If waiting, add error message; otherwise update existing message
+            if (isWaitingRef.current) {
+                const errorMessage: Message = {
+                    sender: "assistant",
+                    text: t('auth.errorOccurred'),
+                };
+                setMessages((prev) => [...prev, errorMessage]);
+            } else {
+                setMessages((prev) => {
+                    const updated = [...prev];
+                    const lastMessage = updated[updated.length - 1];
+                    if (lastMessage && lastMessage.sender === "assistant") {
+                        lastMessage.text = t('auth.errorOccurred');
+                    }
+                    return updated;
+                });
+            }
+            
+            isWaitingRef.current = false;
             setIsLoading(false);
+            setIsWaitingForResponse(false);
         };
 
         const onComplete = (newConversationId?: string) => {
+            isWaitingRef.current = false;
             setIsLoading(false);
+            setIsWaitingForResponse(false);
+            
             // If we got a new conversation ID, update our state
             if (newConversationId && !conversationId) {
                 setConversationId(newConversationId);
@@ -180,6 +212,14 @@ export default function NewChatPage() {
                         )}
                     </div>
                 ))}
+                
+                {/* Show thinking indicator when waiting for first response */}
+                {isWaitingForResponse && (
+                    <div className="max-w-[75%] px-4 py-3 rounded-xl bg-blue-50 dark:bg-gray-800 mr-auto">
+                        <TypingIndicator />
+                    </div>
+                )}
+                
                 <div ref={bottomRef} />
             </div>
 
