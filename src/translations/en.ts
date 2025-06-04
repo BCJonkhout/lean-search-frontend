@@ -16,6 +16,11 @@ const translations = {
     loadingFiles: "Loading files...",
     thinking: "AI is thinking..."
   },
+  navigation: {
+    chat: "CHAT",
+    files: "FILES",
+    others: "OTHERS"
+  },
   auth: {
     email: "Email",
     name: "Name",
@@ -61,6 +66,7 @@ const translations = {
   },
   files: {
     title: "My Files",
+    uploadFile: "Upload File",
     name: "File Name",
     size: "Size",
     status: "Status",
@@ -84,7 +90,7 @@ const translations = {
     searchPlaceholder: "Search conversations...",
     noSearchResults: "No conversations found",
     noConversations: "No conversations yet",
-    recentChats: "Recent Chats"
+    recentChats: "RECENT CHATS"
   }
 };
 

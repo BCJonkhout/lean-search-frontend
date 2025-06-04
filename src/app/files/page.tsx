@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { documentService } from "@/services";
 import {
@@ -12,6 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Alert } from "@/components/ui-elements/alert";
+import { Button } from "@/components/ui-elements/button";
 
 interface FileItem {
   id: string;
@@ -26,6 +28,7 @@ interface FileItem {
 
 export default function FilesPage() {
   const { t } = useLanguage();
+  const router = useRouter();
   const [files, setFiles] = useState<FileItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -154,13 +157,27 @@ export default function FilesPage() {
           />
         </div>
       )}
-      <div className="mb-7.5">
-        <h1 className="text-body-2xlg font-bold text-dark dark:text-white mb-2">
-          {t('files.title')}
-        </h1>
-        <div className="text-sm text-gray-500 dark:text-gray-400">
-          {files.length} {files.length === 1 ? 'file' : 'files'}
+      <div className="mb-7.5 flex justify-between items-start">
+        <div>
+          <h1 className="text-body-2xlg font-bold text-dark dark:text-white mb-2">
+            {t('files.title')}
+          </h1>
+          <div className="text-sm text-gray-500 dark:text-gray-400">
+            {files.length} {files.length === 1 ? 'file' : 'files'}
+          </div>
         </div>
+        <Button
+          label={t('files.uploadFile')}
+          variant="primary"
+          shape="rounded"
+          size="small"
+          onClick={() => router.push('/new-file')}
+          icon={
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+            </svg>
+          }
+        />
       </div>
 
       {files.length === 0 ? (

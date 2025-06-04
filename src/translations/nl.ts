@@ -16,6 +16,11 @@ const translations = {
     loadingFiles: "Bestanden laden...",
     thinking: "AI denkt na..."
   },
+  navigation: {
+    chat: "CHAT",
+    files: "BESTANDEN",
+    others: "OVERIGE"
+  },
   auth: {
     email: "E-mail",
     name: "Naam",
@@ -61,6 +66,7 @@ const translations = {
   },
   files: {
     title: "Mijn Bestanden",
+    uploadFile: "Bestand Uploaden",
     name: "Bestandsnaam",
     size: "Grootte",
     status: "Status",
@@ -84,7 +90,7 @@ const translations = {
     searchPlaceholder: "Zoek gesprekken...",
     noSearchResults: "Geen gesprekken gevonden",
     noConversations: "Nog geen gesprekken",
-    recentChats: "Recente Chats"
+    recentChats: "RECENTE CHATS"
   }
 };
 

@@ -14,14 +14,14 @@ type NavItem = {
 };
 
 type NavSection = {
-  label: string;
+  labelKey: string;
   items: NavItem[];
 };
 
 
 export const NAV_DATA: NavSection[] = [
   {
-    label: "CHAT",
+    labelKey: "navigation.chat",
     items: [
       {
         titleKey: "common.newChat",
@@ -32,7 +32,7 @@ export const NAV_DATA: NavSection[] = [
     ]
   },
   {
-    label: "FILES",
+    labelKey: "navigation.files",
     items: [
       {
         titleKey: "common.newFile",
@@ -49,7 +49,7 @@ export const NAV_DATA: NavSection[] = [
     ]
   },
   {
-    label: "OTHERS",
+    labelKey: "navigation.others",
     items: [
       {
         titleKey: "common.settings",
