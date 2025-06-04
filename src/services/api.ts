@@ -65,7 +65,12 @@ class ApiClient {
           localStorage.removeItem('email');
           localStorage.removeItem('userId');
           window.dispatchEvent(new Event('authChanged'));
-          window.location.href = '/auth/sign-in';
+          
+          // Only redirect if not already on an auth page
+          const currentPath = window.location.pathname;
+          if (!currentPath.startsWith('/auth/')) {
+            window.location.href = '/auth/sign-in';
+          }
         }
 
         return Promise.reject(apiError);

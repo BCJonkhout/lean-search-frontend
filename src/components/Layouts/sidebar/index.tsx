@@ -51,8 +51,11 @@ export function Sidebar() {
   }, [pathname]);
 
   useEffect(() => {
-    loadConversations();
-  }, []);
+    // Only load conversations if not on an auth page
+    if (!pathname.startsWith('/auth/')) {
+      loadConversations();
+    }
+  }, [pathname]);
 
   const loadConversations = async () => {
     try {
@@ -111,7 +114,7 @@ export function Sidebar() {
 
           {/* Navigation */}
           <div className="custom-scrollbar mt-6 flex-1 overflow-y-auto pr-3 min-[850px]:mt-10">
-            {NAV_DATA.map((section, sectionIndex) => (
+            {NAV_DATA.map((section) => (
               <div key={section.label}>
                 <div className="mb-6">
                   <h2 className="mb-5 text-sm font-medium text-dark-4 dark:text-dark-6">
