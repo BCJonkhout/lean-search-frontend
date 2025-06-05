@@ -16,7 +16,7 @@ export interface ApiError {
 }
 
 class ApiClient {
-  private instance: AxiosInstance;
+  instance: AxiosInstance;
 
   constructor(baseURL: string) {
     this.instance = axios.create({
