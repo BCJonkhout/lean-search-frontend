@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/table";
 import { Alert } from "@/components/ui-elements/alert";
 import { Button } from "@/components/ui-elements/button";
+import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import SwitcherOne from "@/components/FormElements/Switchers/SwitcherOne";
 
 interface FileItem {
@@ -37,6 +38,8 @@ export default function FilesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [alert, setAlert] = useState<{variant: 'error' | 'success' | 'warning', title: string, description: string} | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [targetFileId, setTargetFileId] = useState<string | null>(null);
   const [showGlobalFiles, setShowGlobalFiles] = useState(false);
 
   useEffect(() => {
@@ -69,21 +72,26 @@ export default function FilesPage() {
     }
   });
 
-  const handleDelete = async (fileId: string) => {
-    if (!confirm(t('files.confirmDelete'))) {
-      return;
-    }
+  const promptDelete = (fileId: string) => {
+    setTargetFileId(fileId);
+    setConfirmOpen(true);
+  };
 
+  const handleConfirmDelete = async () => {
+    if (!targetFileId) return;
     try {
-      const response = await documentService.deleteDocument(fileId);
+      const response = await documentService.deleteDocument(targetFileId);
       if (response.success) {
-        setFiles(files.filter(file => file.id !== fileId));
+        setFiles(files.filter(file => file.id !== targetFileId));
       } else {
-        setAlert({variant: 'error', title: t('files.deleteError'), description: ''});
+        setAlert({ variant: 'error', title: t('files.deleteError'), description: '' });
       }
     } catch (error) {
       console.error("Error deleting file:", error);
-      setAlert({variant: 'error', title: t('files.deleteError'), description: ''});
+      setAlert({ variant: 'error', title: t('files.deleteError'), description: '' });
+    } finally {
+      setConfirmOpen(false);
+      setTargetFileId(null);
     }
   };
 
@@ -304,7 +312,7 @@ export default function FilesPage() {
                         </svg>
                       </button>
                       <button
-                        onClick={() => handleDelete(file.id)}
+                        onClick={() => promptDelete(file.id)}
                         className="p-2 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
                         title={t('files.delete')}
                       >
@@ -320,6 +328,15 @@ export default function FilesPage() {
           </Table>
         </div>
       )}
+      <ConfirmModal
+        open={confirmOpen}
+        title={t('files.confirmDelete')}
+        confirmText={t('common.confirm')}
+        cancelText={t('common.cancel')}
+        variant="warning"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setConfirmOpen(false)}
+      />
     </div>
   );
 }

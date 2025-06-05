@@ -16,7 +16,10 @@ const translations = {
     loading: "Loading...",
     loadingConversation: "Loading conversation...",
     loadingFiles: "Loading files...",
-    thinking: "AI is thinking..."
+    thinking: "AI is thinking...",
+    confirm: "Confirm",
+    cancel: "Cancel",
+    areYouSure: "Are you sure?"
   },
   navigation: {
     chat: "CHAT",

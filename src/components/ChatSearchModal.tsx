@@ -72,7 +72,7 @@ export default function ChatSearchModal({ open, onClose }: ChatSearchModalProps)
     <Modal
       open={open}
       onClose={onClose}
-      className="max-h-[80vh] w-full max-w-2xl rounded-[15px] bg-white p-0 shadow-3"
+      className="!h-auto !max-h-[80vh] w-full !max-w-2xl rounded-[15px] bg-white p-0 shadow-3"
     >
       {/* Header */}
       <div className="flex items-center justify-between p-6 border-b">

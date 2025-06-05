@@ -13,6 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Alert } from "@/components/ui-elements/alert";
+import { ConfirmModal } from "@/components/ui/ConfirmModal";
 
 export default function AdminUsersPage() {
   const { t } = useLanguage();
@@ -21,6 +22,8 @@ export default function AdminUsersPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [alert, setAlert] = useState<{variant: 'error' | 'success' | 'warning', title: string, description: string} | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [targetUserId, setTargetUserId] = useState<string | null>(null);
 
   useEffect(() => {
     loadUsers();
@@ -43,22 +46,27 @@ export default function AdminUsersPage() {
     }
   };
 
-  const handleDeleteUser = async (userId: string) => {
-    if (!confirm(t('admin.confirmDeleteUser'))) {
-      return;
-    }
+  const promptDeleteUser = (userId: string) => {
+    setTargetUserId(userId);
+    setConfirmOpen(true);
+  };
 
+  const handleConfirmDelete = async () => {
+    if (!targetUserId) return;
     try {
-      const response = await adminService.deleteUser(userId);
+      const response = await adminService.deleteUser(targetUserId);
       if (response.success) {
-        setUsers(users.filter(user => user.id !== userId));
-        setAlert({variant: 'success', title: t('admin.userDeleted'), description: ''});
+        setUsers(users.filter(user => user.id !== targetUserId));
+        setAlert({ variant: 'success', title: t('admin.userDeleted'), description: '' });
       } else {
-        setAlert({variant: 'error', title: t('admin.deleteUserError'), description: ''});
+        setAlert({ variant: 'error', title: t('admin.deleteUserError'), description: '' });
       }
     } catch (error) {
-      console.error("Error deleting user:", error);
-      setAlert({variant: 'error', title: t('admin.deleteUserError'), description: ''});
+      console.error('Error deleting user:', error);
+      setAlert({ variant: 'error', title: t('admin.deleteUserError'), description: '' });
+    } finally {
+      setConfirmOpen(false);
+      setTargetUserId(null);
     }
   };
 
@@ -183,7 +191,7 @@ export default function AdminUsersPage() {
                   <TableCell className="!text-right">
                     <div className="flex justify-end items-center gap-2">
                       <button
-                        onClick={() => handleDeleteUser(user.id)}
+                        onClick={() => promptDeleteUser(user.id)}
                         className="p-2 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
                         title={t('admin.deleteUser')}
                       >
@@ -199,6 +207,15 @@ export default function AdminUsersPage() {
           </Table>
         </div>
       )}
+    <ConfirmModal
+      open={confirmOpen}
+      title={t("admin.confirmDeleteUser")}
+      confirmText={t("common.confirm")}
+      cancelText={t("common.cancel")}
+      variant="warning"
+      onConfirm={handleConfirmDelete}
+      onCancel={() => setConfirmOpen(false)}
+    />
     </div>
   );
 }
