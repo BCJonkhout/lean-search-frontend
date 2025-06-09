@@ -3,7 +3,7 @@
 import { Logo } from "@/components/logo";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { NAV_DATA, filterNavItemsByRole } from "./data";
 import { ArrowLeftIcon, ChevronUp } from "./icons";
@@ -18,6 +18,7 @@ export function Sidebar() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const currentConversationId = searchParams.get('id');
+  const router = useRouter();
   const { setIsOpen, isOpen, isMobile, toggleSidebar } = useSidebarContext();
   const { t } = useLanguage();
   const { user } = useAuth();
@@ -145,14 +146,66 @@ export function Sidebar() {
                     <nav role="navigation" aria-label={t(section.labelKey)}>
                       <ul className="space-y-2">
                         {filteredItems.map((item) => (
-                        <li key={item.titleKey}>
-                          {item.items.length ? (
-                            <div>
-                              <MenuItem
-                                isActive={item.items.some(
-                                  ({ url }) => url === pathname,
+                          <li key={item.titleKey}>
+                            {item.items.length ? (
+                              <div>
+                                <MenuItem
+                                  isActive={item.items.some(
+                                    ({ url }) => url === pathname,
+                                  )}
+                                  onClick={() => toggleExpanded(item.titleKey)}
+                                >
+                                  <item.icon
+                                    className="size-6 shrink-0"
+                                    aria-hidden="true"
+                                  />
+
+                                  <span>{t(item.titleKey)}</span>
+
+                                  <ChevronUp
+                                    className={cn(
+                                      "ml-auto rotate-180 transition-transform duration-200",
+                                      expandedItems.includes(item.titleKey) &&
+                                        "rotate-0",
+                                    )}
+                                    aria-hidden="true"
+                                  />
+                                </MenuItem>
+
+                                {expandedItems.includes(item.titleKey) && (
+                                  <ul
+                                    className="ml-9 mr-0 space-y-1.5 pb-[15px] pr-0 pt-2"
+                                    role="menu"
+                                  >
+                                    {item.items.map((subItem) => (
+                                      <li key={subItem.titleKey} role="none">
+                                        <MenuItem
+                                          as="link"
+                                          href={subItem.url}
+                                          isActive={pathname === subItem.url}
+                                        >
+                                          <span>{t(subItem.titleKey)}</span>
+                                        </MenuItem>
+                                      </li>
+                                    ))}
+                                  </ul>
                                 )}
-                                onClick={() => toggleExpanded(item.titleKey)}
+                              </div>
+                            ) : item.url === "/chat" ? (
+                              <MenuItem
+                                className="flex items-center gap-3 py-3"
+                                as="button"
+                                isActive={
+                                  pathname === item.url &&
+                                  !currentConversationId
+                                }
+                                onClick={() => {
+                                  if (isMobile) toggleSidebar();
+                                  window.dispatchEvent(new Event("newChat"));
+                                  if (item.url != null) {
+                                    router.push(item.url);
+                                  }
+                                }}
                               >
                                 <item.icon
                                   className="size-6 shrink-0"
@@ -160,100 +213,85 @@ export function Sidebar() {
                                 />
 
                                 <span>{t(item.titleKey)}</span>
-
-                                <ChevronUp
-                                  className={cn(
-                                    "ml-auto rotate-180 transition-transform duration-200",
-                                    expandedItems.includes(item.titleKey) &&
-                                      "rotate-0",
-                                  )}
+                              </MenuItem>
+                            ) : (
+                              <MenuItem
+                                className="flex items-center gap-3 py-3"
+                                as="link"
+                                href={item.url || "#"}
+                                isActive={pathname === item.url}
+                              >
+                                <item.icon
+                                  className="size-6 shrink-0"
                                   aria-hidden="true"
                                 />
+
+                                <span>{t(item.titleKey)}</span>
                               </MenuItem>
-
-                              {expandedItems.includes(item.titleKey) && (
-                                <ul
-                                  className="ml-9 mr-0 space-y-1.5 pb-[15px] pr-0 pt-2"
-                                  role="menu"
-                                >
-                                  {item.items.map((subItem) => (
-                                    <li key={subItem.titleKey} role="none">
-                                      <MenuItem
-                                        as="link"
-                                        href={subItem.url}
-                                        isActive={pathname === subItem.url}
-                                      >
-                                        <span>{t(subItem.titleKey)}</span>
-                                      </MenuItem>
-                                    </li>
-                                  ))}
-                                </ul>
-                              )}
-                            </div>
-                          ) : (
-                            <MenuItem
-                              className="flex items-center gap-3 py-3"
-                              as="link"
-                              href={item.url || "#"}
-                              isActive={pathname === item.url}
-                            >
-                              <item.icon
-                                className="size-6 shrink-0"
-                                aria-hidden="true"
-                              />
-
-                              <span>{t(item.titleKey)}</span>
-                            </MenuItem>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  </nav>
-                </div>
-
-                {/* Add recent conversations after CHAT section */}
-                {section.labelKey === "navigation.chat" && (
-                  <div className="mb-6">
-                    <h2 className="mb-5 text-sm font-medium text-dark-4 dark:text-dark-6">
-                      {t('chats.recentChats')}
-                    </h2>
-                    <nav role="navigation" aria-label="Recent chats">
-                      <ul className="space-y-2">
-                        {conversations.slice(0, 5).map((conversation) => (
-                          <li key={conversation.id}>
-                            <MenuItem
-                              as="link"
-                              href={`/chat?id=${conversation.id}`}
-                              isActive={pathname === `/chat` && currentConversationId === conversation.id}
-                              className="flex items-center gap-3 py-2"
-                            >
-                              <span className="truncate text-sm">
-                                {conversation.title || t('chats.noConversations')}
-                              </span>
-                            </MenuItem>
+                            )}
                           </li>
                         ))}
-                        {/* See all chats option */}
-                        <li>
-                          <MenuItem
-                            onClick={() => setShowSearchModal(true)}
-                            className="flex items-center gap-3 py-2 text-primary cursor-pointer"
-                            isActive={false}
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
-                            <span className="text-sm">
-                              {t('chats.seeAll')}
-                            </span>
-                          </MenuItem>
-                        </li>
                       </ul>
                     </nav>
                   </div>
-                )}
-                  </div>
-                );
+
+                  {/* Add recent conversations after CHAT section */}
+                  {section.labelKey === "navigation.chat" && (
+                    <div className="mb-6">
+                      <h2 className="mb-5 text-sm font-medium text-dark-4 dark:text-dark-6">
+                        {t("chats.recentChats")}
+                      </h2>
+                      <nav role="navigation" aria-label="Recent chats">
+                        <ul className="space-y-2">
+                          {conversations.slice(0, 5).map((conversation) => (
+                            <li key={conversation.id}>
+                              <MenuItem
+                                as="link"
+                                href={`/chat?id=${conversation.id}`}
+                                isActive={
+                                  pathname === `/chat` &&
+                                  currentConversationId === conversation.id
+                                }
+                                className="flex items-center gap-3 py-2"
+                              >
+                                <span className="truncate text-sm">
+                                  {conversation.title ||
+                                    t("chats.noConversations")}
+                                </span>
+                              </MenuItem>
+                            </li>
+                          ))}
+                          {/* See all chats option */}
+                          <li>
+                            <MenuItem
+                              onClick={() => setShowSearchModal(true)}
+                              className="flex cursor-pointer items-center gap-3 py-2 text-primary"
+                              isActive={false}
+                            >
+                              <svg
+                                className="h-4 w-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                                />
+                              </svg>
+                              <span className="text-sm">
+                                {t("chats.seeAll")}
+                              </span>
+                            </MenuItem>
+                          </li>
+                        </ul>
+                      </nav>
+                    </div>
+                  )}
+                </div>
+              );
               }
             )}
           </div>

@@ -42,6 +42,20 @@ export default function NewChatPage() {
         }
     }, [conversationIdFromUrl]);
 
+    // Listen for new chat requests to reset state
+    useEffect(() => {
+        const handleNewChat = () => {
+            setMessages([]);
+            setConversationId(null);
+            setHasStarted(false);
+            setLoadingConversation(false);
+        };
+        window.addEventListener('newChat', handleNewChat);
+        return () => {
+            window.removeEventListener('newChat', handleNewChat);
+        };
+    }, []);
+
     const loadConversation = async () => {
         if (!conversationIdFromUrl) return;
         
