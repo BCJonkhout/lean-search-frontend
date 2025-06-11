@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(/home/beau/.nvm/versions/node/v24.1.0/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n \"import.*alert\" \"/mnt/c/Development/Symbol Lean Search/lean-search-frontend/src/\")",
-      "Bash(/home/beau/.nvm/versions/node/v24.1.0/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n -i \"window\\.alert|globalThis\\.alert|self\\.alert\" \"/mnt/c/Development/Symbol Lean Search/lean-search-frontend/src/\")"
-    ]
-  },
-  "enableAllProjectMcpServers": false
-}
